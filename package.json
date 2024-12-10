@@ -1,11 +1,11 @@
 {
-  "name": "next-flask",
+  "name": "flask-next-videogen",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "flask-dev": "FLASK_DEBUG=1 pip3 install -r requirements.txt && python3 -m flask --app api/index run -p 5328",
+    "flask-dev": "source venv/bin/activate && export FLASK_DEBUG=1 && pip3 install -q -r requirements.txt && python3 -u -m flask --app api/index run -p 5328",
     "next-dev": "next dev",
-    "dev": "concurrently \"pnpm run next-dev\" \"pnpm run flask-dev\"",
+    "dev": "concurrently \"pnpm run next-dev\" \"pnpm run flask-dev\" --names \"Next.js,Flask\" --prefix-colors \"magenta,cyan\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -15,10 +15,10 @@
     "@types/react": "18.2.6",
     "@types/react-dom": "18.2.4",
     "autoprefixer": "10.4.14",
-    "concurrently": "^8.0.1",
+    "concurrently": "^8.2.2",
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.2",
-    "next": "13.4.3",
+    "next": "15.0.4",
     "postcss": "8.4.23",
     "react": "18.2.0",
     "react-dom": "18.2.0",
