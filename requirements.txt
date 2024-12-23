@@ -1,2 +1,4 @@
 Flask
 moviepy
+elevenlabs
+pydub
