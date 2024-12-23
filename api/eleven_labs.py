@@ -21,10 +21,10 @@ def check_client_limit():
     return character_count, character_limit
 
     
-def generate_eleven_labs_audio(text, item_id):
+def generate_eleven_labs_audio(text, item_id, voice_id):
     audio = client.generate(
         text=text,
-        voice="D38z5RcWu1voky8WS1ja", # Fin (Legacy) voice
+        voice=voice_id,
         model="eleven_multilingual_v2"
     )
     

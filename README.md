@@ -83,7 +83,7 @@ https://github.com/elevenlabs/elevenlabs-python
 ## TODO:
 
 - [ ] Add Functionality for "Połącz Wszystko" Button
-- [ ] Add Different Voices Actor with different Colors
+- [x] Add Different Voices Actor
 - [ ] Add Draggable width in Home between two main divs.
 - [ ] Add Settings
   - Option - Scroll to bottom when new item added

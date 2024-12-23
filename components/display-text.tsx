@@ -2,6 +2,7 @@
 
 import { TextItemProps } from "@/components/home";
 import TextItem from "@/components/text-item";
+import { VoiceActor } from "@/helper/available-voice-actors";
 import { Reorder } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
 
@@ -11,7 +12,11 @@ interface DisplayTextProps {
 }
 
 export default function DisplayText({ items, setItems }: DisplayTextProps) {
-  const handleEdit = (id: string, newText: string) => {
+  const handleEdit = (
+    id: string,
+    newText: string,
+    newVoiceActor: VoiceActor | null
+  ) => {
     // Create new id in order to force re-render
     const newId = uuidv4();
 
@@ -22,6 +27,7 @@ export default function DisplayText({ items, setItems }: DisplayTextProps) {
               ...item,
               id: newId,
               text: newText,
+              voice: newVoiceActor,
               audioFileName: null,
               audioDuration: null,
             }

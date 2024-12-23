@@ -13,19 +13,29 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { handleKeyDown } from "@/helper/handle-key-down";
 import { Settings2 } from "lucide-react";
+import { VoiceActor } from "@/helper/available-voice-actors";
+import VoiceSelector from "@/components/voice-selector";
 
 interface EditDialogProps {
   initialText: string;
-  onEdit: (newText: string) => void;
+  initialVoiceActor: VoiceActor | null;
+  onEdit: (newText: string, newVoiceActor: VoiceActor | null) => void;
 }
 
-export function EditDialog({ initialText, onEdit }: EditDialogProps) {
+export function EditDialog({
+  initialText,
+  initialVoiceActor,
+  onEdit,
+}: EditDialogProps) {
   const [text, setText] = useState(initialText);
+  const [voiceActor, setVoiceActor] = useState<VoiceActor | null>(
+    initialVoiceActor
+  );
   const [open, setOpen] = useState(false);
 
   const handleSave = () => {
-    if (text !== initialText) {
-      onEdit(text);
+    if (text !== initialText || voiceActor !== initialVoiceActor) {
+      onEdit(text, voiceActor);
     }
     setOpen(false);
   };
@@ -53,6 +63,7 @@ export function EditDialog({ initialText, onEdit }: EditDialogProps) {
           }}
           className="min-h-[300px]"
         />
+        <VoiceSelector voice={voiceActor} setVoice={setVoiceActor} />
         <DialogFooter>
           <Button type="submit" onClick={handleSave}>
             Zapisz zmiany

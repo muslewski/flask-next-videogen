@@ -11,7 +11,6 @@ export const removeFile = async (fileName: string) => {
     const result = await response.json();
     if (result.status === "success") {
       console.log("Audio file removed successfully");
-      // Optionally, update the state or UI to reflect the removal
     } else {
       console.error("Error removing audio file:", result.message);
     }
