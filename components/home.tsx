@@ -6,7 +6,7 @@ import CombineAudioDisplay from "@/components/combine-audio-display";
 import DeleteAll from "@/components/delete-all";
 import DisplayText from "@/components/display-text";
 import ElevenLabsCredits from "@/components/eleven-labs-credits";
-import GenerateAudio from "@/components/generate-audio";
+import GenerateAudioButton from "@/components/generate-audio-button";
 import { VoiceActor } from "@/helper/available-voice-actors";
 import { removeFile } from "@/helper/remove-file";
 import Cookies from "js-cookie";
@@ -91,7 +91,7 @@ export default function Home() {
           />
 
           <div className="flex items-center gap-6 self-end bg-gradient-to-br from-gray-600/5 rounded-xl px-4 py-3">
-            <GenerateAudio
+            <GenerateAudioButton
               textItems={textItems}
               setTextItems={setTextItems}
               setIsGenerating={setIsGenerating}

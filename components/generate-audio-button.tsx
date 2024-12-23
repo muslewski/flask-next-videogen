@@ -8,7 +8,7 @@ interface GenerateAudioProps {
   setIsGenerating: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function GenerateAudio({
+export default function GenerateAudioButton({
   textItems,
   setTextItems,
   setIsGenerating,
