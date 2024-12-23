@@ -4,7 +4,7 @@ from flask import Flask,request, jsonify, send_file
 from flask_cors import CORS
 
 from api.constants import AUDIO_DIR
-from api.eleven_labs import generate_eleven_labs_audio
+from api.eleven_labs import check_client_limit, generate_eleven_labs_audio
 
 app = Flask(__name__)
 CORS(app)
@@ -52,3 +52,10 @@ def remove_audio(audio_file_name):
         return jsonify({"status": "success", "message": "Audio file removed"})
     else:
         return jsonify({"status": "error", "message": "Audio file not found"})
+    
+
+@app.route("/api/eleven-labs-credits")
+def check_eleven_labs_limit():
+    character_count, character_limit = check_client_limit()
+    
+    return jsonify({"characterCount": character_count, "characterLimit": character_limit})

@@ -78,3 +78,14 @@ To learn more about Next.js, take a look at the following resources:
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
 https://whimsical.com/video-generator-3H49eUo3Vqfvrn6vb9ifcJ
+https://github.com/elevenlabs/elevenlabs-python
+
+## TODO:
+
+- [ ] Add Functionality for "Połącz Wszystko" Button
+- [ ] Add Different Voices Actor with different Colors
+- [ ] Add Draggable width in Home between two main divs.
+- [ ] Add Settings
+  - Option - Scroll to bottom when new item added
+  - Option - Add New Voices from eleven Labs
+  - Option - Add Many API Keys so we will have more capacity

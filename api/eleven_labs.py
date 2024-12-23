@@ -1,3 +1,5 @@
+import time
+from tracemalloc import start
 from elevenlabs.client import ElevenLabs
 import os
 from dotenv import load_dotenv
@@ -12,6 +14,13 @@ client = ElevenLabs(
     api_key=os.getenv("ELEVEN_LABS_API_KEY"), 
 )
 
+def check_client_limit():
+    character_count = client.user.get_subscription().character_count
+    character_limit = client.user.get_subscription().character_limit
+    
+    return character_count, character_limit
+
+    
 def generate_eleven_labs_audio(text, item_id):
     audio = client.generate(
         text=text,
