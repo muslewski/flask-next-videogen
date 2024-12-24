@@ -3,7 +3,7 @@ from flask import Flask,request, jsonify, send_file
 from flask_cors import CORS
 
 from api.constants import AUDIO_DIR
-from api.eleven_labs import check_client_limit, generate_eleven_labs_audio
+from api.eleven_labs import check_client_limit, generate_blank_audio, generate_eleven_labs_audio
 from pydub import AudioSegment
 import uuid
 
@@ -22,7 +22,9 @@ def generate_audio():
         # Extract item values
         item_id = item.get("id")
         item_text = item.get("text")
-        voice_id = item["voice"]["id"]
+        
+        voice = item.get("voice")  # Get the voice object safely
+        voice_id = voice.get("id") if voice else None  # Safely extract voice_id
         
         # Check if audio file already exists
         file_name = item.get("audioFileName")
@@ -30,6 +32,9 @@ def generate_audio():
         
         if file_name and duration:
             continue
+        elif not voice_id and duration:
+            # Generate blank audio
+            file_name, duration = generate_blank_audio(duration, item_id)
         else:
             # Generate Eleven Labs audio
             file_name, duration  = generate_eleven_labs_audio(item_text, item_id, voice_id)

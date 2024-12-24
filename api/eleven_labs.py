@@ -44,3 +44,16 @@ def generate_eleven_labs_audio(text, item_id, voice_id):
         
     return audio_file_name, audio_duration
     
+
+def generate_blank_audio(duration, item_id):
+    # Generate silent audio
+    silent_audio = AudioSegment.silent(duration=int(duration * 1000))
+    
+    audio_file_name = f"blank_{item_id}.mp3"
+    audio_file_path = os.path.join(AUDIO_DIR, audio_file_name)
+    
+    # Export the silent audio
+    silent_audio.export(audio_file_path, format="mp3")
+    
+    return audio_file_name, duration
+    

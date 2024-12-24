@@ -39,7 +39,10 @@ export default function VoiceSelector({
         <SelectGroup>
           {availableVoiceActors.map((actor) => (
             <SelectItem value={actor.id} key={actor.id}>
-              <span className="bg-gray-950/50 rounded-xl p-1 text-lg">
+              <span
+                className="rounded-xl p-0.5 text-lg"
+                style={{ backgroundColor: actor.color }}
+              >
                 {actor.emoji}
               </span>
               <span className="ml-2">{actor.name}</span>

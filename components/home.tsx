@@ -41,10 +41,15 @@ export default function Home() {
   // Save textItems to cookie whenever it changes
   useEffect(() => {
     Cookies.set("textItems", JSON.stringify(textItems), { expires: 7 });
+    console.log(textItems);
   }, [textItems]);
 
   // Add text from AddText component
-  const handleAddText = (text: string, voiceActor: VoiceActor | null) => {
+  const handleAddText = (
+    text: string,
+    voiceActor: VoiceActor | null,
+    audioDuration?: number | null
+  ) => {
     // Divide the text into lines
     const lines = text.split("\n").filter((line) => line.length > 0);
     // Create new items
@@ -55,7 +60,7 @@ export default function Home() {
           text: line,
           voice: voiceActor,
           audioFileName: null,
-          audioDuration: null,
+          audioDuration: audioDuration,
         } as TextItemProps)
     );
     // Add new items to the list

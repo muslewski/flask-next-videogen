@@ -54,14 +54,17 @@ export default function TextItem({
         detectNumbers(item.text) && "text-red-500"
       )}
     >
-      <div className="flex items-start gap-2">
+      <div className="flex items-center gap-2 w-full">
         {/* Display Index */}
         <span className="text-gray-500/30 bg-gray-600/5 rounded-md py-0.5 px-1 text-xs font-light">
           {index + 1}.
         </span>
         {/* Display Voice Actor Emoji */}
         {item.voice?.emoji && (
-          <span className="bg-gray-950/20 rounded-md py-0.5 px-1 text-xs">
+          <span
+            className="rounded-xl py-0.5 px-1 text-sm"
+            style={{ backgroundColor: item.voice.color }}
+          >
             {item.voice.emoji}
           </span>
         )}
@@ -72,6 +75,15 @@ export default function TextItem({
           </span>
         )}
         <span>{item.text}</span>
+
+        {/* If there is no voice than we can conclude that this is break  */}
+        {item.voice === null && (
+          <div className="flex items-center justify-center w-full py-2">
+            <div className="flex-grow h-px bg-blue-600/50 mx-4 rounded-full"></div>
+            <span className="px-4 text-blue-700/50 font-medium">Przerwa</span>
+            <div className="flex-grow h-px bg-blue-600/50 mx-4 rounded-full"></div>
+          </div>
+        )}
       </div>
       <div className="space-x-2 flex-shrink-0">
         <FindSingleVideoButton />

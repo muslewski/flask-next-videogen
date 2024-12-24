@@ -7,9 +7,14 @@ import { useState } from "react";
 import { VoiceActor } from "@/helper/available-voice-actors";
 import VoiceSelector from "@/components/voice-selector";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
 
 interface AddTextProps {
-  onAdd: (text: string, voiceActor: VoiceActor | null) => void;
+  onAdd: (
+    text: string,
+    voiceActor: VoiceActor | null,
+    audioDuration?: number | null
+  ) => void;
 }
 
 export default function AddText({ onAdd }: AddTextProps) {
@@ -18,6 +23,7 @@ export default function AddText({ onAdd }: AddTextProps) {
     null
   );
   const [error, setError] = useState("");
+  const [breakDuration, setBreakDuration] = useState<number>(0);
 
   const handleAdd = () => {
     // Check if voice actor is selected
@@ -41,6 +47,24 @@ export default function AddText({ onAdd }: AddTextProps) {
     }
   };
 
+  const handleAddBreak = () => {
+    if (breakDuration > 0) {
+      onAdd(" ", null, breakDuration);
+      setBreakDuration(0);
+      setError("");
+
+      // Scroll to the last item
+      setTimeout(() => {
+        const reorderGroup = document.getElementById("scroll-here");
+        if (reorderGroup) {
+          reorderGroup.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+      }, 1);
+    } else {
+      setError("Ustaw czas trwania przerwy.");
+    }
+  };
+
   return (
     <div className="max-w-7xl space-y-4">
       <h2 className="text-lg font-bold">Dodaj tekst:</h2>
@@ -58,15 +82,28 @@ export default function AddText({ onAdd }: AddTextProps) {
         setVoice={setCurrentVoiceActor}
         clearError={() => setError("")}
       />
+
+      <Button onClick={handleAdd} className="w-full">
+        Dodaj
+      </Button>
+
       {error && (
         <Alert variant="destructive">
           <AlertTitle>Błąd</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-      <Button onClick={handleAdd} className="w-full">
-        Dodaj
-      </Button>
+
+      <div className="flex items-center space-x-4 pt-10">
+        <Input
+          type="number"
+          placeholder="Czas trwania (sekundy)"
+          value={breakDuration || ""}
+          onChange={(e) => setBreakDuration(Number(e.target.value))}
+          className="flex-grow"
+        />
+        <Button onClick={handleAddBreak}>Dodaj Przerwę</Button>
+      </div>
     </div>
   );
 }
