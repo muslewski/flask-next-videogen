@@ -1,5 +1,6 @@
 import { DeleteDialog } from "@/components/delete-dialog";
 import { EditDialog } from "@/components/edit-dialog";
+import FindSingleVideoButton from "@/components/find-single-video-button";
 import { TextItemProps } from "@/components/home";
 import PlayAudioButton from "@/components/play-audio-button";
 import { VoiceActor } from "@/helper/available-voice-actors";
@@ -73,6 +74,7 @@ export default function TextItem({
         <span>{item.text}</span>
       </div>
       <div className="space-x-2 flex-shrink-0">
+        <FindSingleVideoButton />
         {item.audioFileName && <PlayAudioButton file={item.audioFileName} />}
 
         <EditDialog

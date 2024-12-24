@@ -39,8 +39,8 @@ export default function CombineAudioDisplay({
     <div className="self-end">
       {combinedAudioExists && combinedAudioUrl && (
         <div className="space-y-2">
-          <h3 className="text-base font-bold text-gray-700">
-            Połączony plik audio:
+          <h3 className="text-base font-medium text-gray-700">
+            Połączony plik:
           </h3>
           <audio
             ref={audioRef}

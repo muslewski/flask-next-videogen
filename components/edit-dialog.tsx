@@ -34,7 +34,7 @@ export function EditDialog({
   const [open, setOpen] = useState(false);
 
   const handleSave = () => {
-    if (text !== initialText || voiceActor !== initialVoiceActor) {
+    if (text !== initialText || voiceActor?.id !== initialVoiceActor?.id) {
       onEdit(text, voiceActor);
     }
     setOpen(false);

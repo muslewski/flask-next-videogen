@@ -7,6 +7,7 @@ import DeleteAll from "@/components/delete-all";
 import DisplayText from "@/components/display-text";
 import ElevenLabsCredits from "@/components/eleven-labs-credits";
 import GenerateAudioButton from "@/components/generate-audio-button";
+import GenerateVideoButton from "@/components/generate-video-button";
 import { VoiceActor } from "@/helper/available-voice-actors";
 import { removeFile } from "@/helper/remove-file";
 import Cookies from "js-cookie";
@@ -90,7 +91,8 @@ export default function Home() {
             combinedAudioUrl={combinedAudioUrl}
           />
 
-          <div className="flex items-center gap-6 self-end bg-gradient-to-br from-gray-600/5 rounded-xl px-4 py-3">
+          <div className="flex flex-wrap items-center gap-6 self-end bg-gradient-to-br from-gray-600/5 rounded-xl px-4 py-3">
+            <GenerateVideoButton />
             <GenerateAudioButton
               textItems={textItems}
               setTextItems={setTextItems}

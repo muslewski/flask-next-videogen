@@ -69,9 +69,11 @@ export default function CombineAudioButton({
   };
 
   return (
-    <Button onClick={handleCombineAudio}>
+    <Button onClick={handleCombineAudio} className="flex items-center">
       <Blend size={18} />
-      {isCombining ? "Łączenie..." : "Połącz"}
+      <span className="ml-2 w-16 text-center">
+        {isCombining ? "Łączenie" : "Połącz"}
+      </span>
     </Button>
   );
 }
