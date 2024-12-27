@@ -2,6 +2,7 @@ import os
 from flask import Flask,request, jsonify, send_file
 from flask_cors import CORS
 
+from api.chat_gpt import summarize_to_one_word
 from api.constants import AUDIO_DIR
 from api.eleven_labs import check_client_limit, generate_blank_audio, generate_eleven_labs_audio
 from pydub import AudioSegment
@@ -105,3 +106,12 @@ def combine_audio():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
             
+            
+@app.route("/api/find-word-chat-gpt", methods=["POST"])
+def find_word_chat_gpt():
+    data = request.json
+    message = data["finalMessage"]
+    
+    words = summarize_to_one_word(message)
+    
+    return jsonify({"status": "success", "queryTags": words})

@@ -63,7 +63,9 @@ export default function TextItem({
         {item.voice?.emoji && (
           <span
             className="rounded-xl py-0.5 px-1 text-sm"
-            style={{ backgroundColor: item.voice.color }}
+            style={{
+              background: `linear-gradient(45deg, ${item.voice.color} 30%, transparent)`,
+            }}
           >
             {item.voice.emoji}
           </span>
@@ -86,7 +88,7 @@ export default function TextItem({
         )}
       </div>
       <div className="space-x-2 flex-shrink-0">
-        <FindSingleVideoButton />
+        <FindSingleVideoButton item={item} />
         {item.audioFileName && <PlayAudioButton file={item.audioFileName} />}
 
         <EditDialog

@@ -10,7 +10,7 @@ export default function ElevenLabsCredits({
 }) {
   const [totalCredits, setTotalCredits] = useState<number | null>(null);
   const [usedCredits, setUsedCredits] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // When text items change, fetch the credits from the server
   useEffect(() => {

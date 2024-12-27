@@ -38,10 +38,20 @@ export default function VoiceSelector({
       <SelectContent>
         <SelectGroup>
           {availableVoiceActors.map((actor) => (
-            <SelectItem value={actor.id} key={actor.id}>
+            <SelectItem
+              value={actor.id}
+              key={actor.id}
+              className="border-l-2 cursor-pointer"
+              style={{
+                borderColor: actor.color,
+                background: `linear-gradient(45deg, ${actor.color} -99%, transparent 9%)`,
+              }}
+            >
               <span
                 className="rounded-xl p-0.5 text-lg"
-                style={{ backgroundColor: actor.color }}
+                style={{
+                  background: `linear-gradient(45deg, ${actor.color} 30%, transparent)`,
+                }}
               >
                 {actor.emoji}
               </span>
