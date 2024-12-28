@@ -30,8 +30,6 @@ export interface VideoObject {
 }
 
 interface StoredValueContextProps {
-  usedVideoIDs: string[] | null;
-  setUsedVideoIDs: React.Dispatch<React.SetStateAction<string[] | null>>;
   items: ItemProps[];
   setItems: React.Dispatch<React.SetStateAction<ItemProps[]>>;
   isGeneratingAudio: boolean;
@@ -47,25 +45,29 @@ const StoredValueContext = createContext<StoredValueContextProps | undefined>(
 );
 
 export const StoredValueProvider = ({ children }: { children: ReactNode }) => {
-  const [usedVideoIDs, setUsedVideoIDs] = useState<string[] | null>([]);
-
-  // main items that store information about text, audio, video, voice etc...
+  /**
+   * Main items that store information about text, audio, video, voice etc.
+   */
   const [items, setItems] = useState<ItemProps[]>([]);
 
-  // Bool that will tell us if we are generating audio in ElevenLabs
+  /**
+   * Boolean that indicates if we are generating audio in ElevenLabs
+   */
   const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false);
 
-  // Bool that will inform if we are combining project to one file
+  /**
+   * Boolean that informs if we are combining project to one file
+   */
   const [isCombiningProject, setIsCombiningProject] = useState<boolean>(false);
 
-  // Filename for combined file if we have one
+  /**
+   * Filename for combined file if we have one
+   */
   const [combinedFileName, setCombinedFileName] = useState<string | null>(null);
 
   return (
     <StoredValueContext.Provider
       value={{
-        usedVideoIDs,
-        setUsedVideoIDs,
         items,
         setItems,
         isGeneratingAudio,

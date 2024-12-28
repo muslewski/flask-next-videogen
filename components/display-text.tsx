@@ -10,7 +10,7 @@ import { Reorder } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
 
 export default function DisplayText() {
-  const { setUsedVideoIDs, setItems, items } = useStoredValueContext();
+  const { setItems, items } = useStoredValueContext();
 
   const handleEdit = (
     id: string,
@@ -47,11 +47,6 @@ export default function DisplayText() {
       prevItems.map((item) =>
         item.id === id ? { ...item, video: newVideo } : item
       )
-    );
-
-    // Add new video id to used ones
-    setUsedVideoIDs((prevIds) =>
-      prevIds ? [...prevIds, newVideo.id] : [newVideo.id]
     );
   };
 

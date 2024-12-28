@@ -20,8 +20,8 @@ def find_pixabay_video(query, max_results=4, page=1):
         response = requests.get(url, params=params)
         data = response.json()
         hits = data["hits"]
-
-        video_links = []
+        total_results = data["totalHits"]
+        
         video_objects = []
 
         for hit in hits:
@@ -42,7 +42,7 @@ def find_pixabay_video(query, max_results=4, page=1):
             
             video_objects.append(video_object)
             
-        return video_objects
+        return video_objects, total_results
 
     except Exception as e:
         print(f"Error fetching videos: {e}")

@@ -42,9 +42,34 @@ Return only result from:`
   const [queryTag, setQueryTag] = useState<string>("");
   const [newVideo, setNewVideo] = useState<VideoObject | null>(null);
   const initialVideo = item.video as VideoObject;
-  const handleSaveChanges = () => {
+  const [videoFileName, setVideoFileName] = useState<string | null>(null);
+
+  const handleSaveChanges = async () => {
     if (newVideo && newVideo !== initialVideo) {
-      updateVideoData(item.id, newVideo);
+      // Save video with flask api
+      const itemId = item.id;
+      const videoUrl = newVideo.videos?.[1].url;
+
+      try {
+        const response = await fetch("/api/save-video", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            itemId,
+            videoUrl,
+          }),
+        });
+        const data = await response.json();
+        const { videoFileName } = data;
+        setVideoFileName(videoFileName);
+        newVideo.videoFileName = videoFileName;
+      } catch (error) {
+        console.error("Error saving video:", error);
+      } finally {
+        updateVideoData(item.id, newVideo);
+      }
     }
   };
 
@@ -65,7 +90,7 @@ Return only result from:`
           <Video size={18} />
         </Button>
       </DialogTrigger>
-      <DialogContent className="min-w-[85%] min-h-[75%] max-h-[95%] overflow-auto">
+      <DialogContent className="min-w-[85%] h-[95%] overflow-y-hidden">
         <DialogHeader>
           <DialogTitle>Znajdź idealne Video</DialogTitle>
           <DialogDescription>
@@ -85,12 +110,13 @@ Return only result from:`
             />
           </div>
 
-          <div className="w-full">
+          <div className="w-full h-fit">
             <FindMatchingVideo
               queryTag={queryTag}
               setQueryTag={setQueryTag}
               newVideo={newVideo}
               setNewVideo={setNewVideo}
+              initialVideo={initialVideo}
             />
           </div>
         </div>

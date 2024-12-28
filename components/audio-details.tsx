@@ -14,26 +14,21 @@ export default function AudioDetails({
         <Headphones size={18} />
         Odtwórz audio
       </b>
-
+      {voice && (
+        <div
+          className="rounded-xl px-3 py-2 w-fit"
+          style={{
+            background: `linear-gradient(45deg, ${voice.color} 20%, transparent)`,
+          }}
+        >
+          {voice.emoji} {voice.name}
+        </div>
+      )}
       <audio
         controls
         className="rounded-md bg-white"
         src={`/api/get-audio/${fileName}`}
       />
-
-      {voice && (
-        <div>
-          Czyta:{" "}
-          <span
-            className="rounded-xl px-3 py-2 ml-2"
-            style={{
-              background: `linear-gradient(45deg, ${voice.color} 20%, transparent)`,
-            }}
-          >
-            {voice.emoji} {voice.name}
-          </span>
-        </div>
-      )}
     </div>
   );
 }

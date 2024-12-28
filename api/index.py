@@ -9,6 +9,7 @@ from pydub import AudioSegment
 import uuid
 
 from api.pixabay_api import find_pixabay_video
+from api.videos import save_video
 
 app = Flask(__name__)
 CORS(app)
@@ -128,10 +129,30 @@ def find_video_pixabay_route():
         return jsonify({"status": "error", "message": "No queryTag provided"}), 400
     
     # find video on pixabay
-    video_objects = find_pixabay_video(query_tag, page=page)
+    video_objects, total_results = find_pixabay_video(query_tag, page=page)
     
     return jsonify({
         "status": "success",
         "message": "Video found",
-        "videoObjects": video_objects
+        "videoObjects": video_objects,
+        "totalResults": total_results
         })
+    
+
+@app.route("/api/save-video", methods=["POST"])
+def save_video_route():
+    data = request.json
+    item_id = data.get("itemId")
+    video_url = data.get("videoUrl")
+    
+    if not item_id:
+        return jsonify({"status": "error", "message": "No itemId provided"}), 400
+    
+    if not video_url:
+        return jsonify({"status": "error", "message": "No videoUrl provided"}), 400
+    
+    try:
+        video_file_name = save_video(item_id, video_url)
+        return jsonify({"status": "success", "message": "Video saved successfully", "videoFileName": video_file_name})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500

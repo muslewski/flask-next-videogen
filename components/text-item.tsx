@@ -2,6 +2,7 @@ import { DeleteDialog } from "@/components/delete-dialog";
 import { EditDialog } from "@/components/edit-dialog";
 import FindSingleVideoButton from "@/components/find-single-video-button";
 import PlayAudioButton from "@/components/play-audio-button";
+import PreviewVideoButton from "@/components/preview-video-button";
 import { ItemProps, VideoObject } from "@/components/stored-value-context";
 import { VoiceActor } from "@/helper/available-voice-actors";
 import { formatTime } from "@/helper/format-time";
@@ -90,6 +91,9 @@ export default function TextItem({
         )}
       </div>
       <div className="space-x-2 flex-shrink-0">
+        {item.video?.videoFileName && (
+          <PreviewVideoButton file={item.video.videoFileName} />
+        )}
         <FindSingleVideoButton item={item} updateVideoData={updateVideoData} />
         {item.audioFileName && <PlayAudioButton file={item.audioFileName} />}
 
