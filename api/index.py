@@ -8,18 +8,18 @@ from api.eleven_labs import check_client_limit, generate_blank_audio, generate_e
 from pydub import AudioSegment
 import uuid
 
+from api.pixabay_api import find_pixabay_video
+
 app = Flask(__name__)
 CORS(app)
 
 @app.route("/api/generate-audio", methods=["POST"])
 def generate_audio():
     data = request.json
-    text_items = data.get("textItems")
+    items = data.get("items")
     
-    print(text_items)
-    
-    new_text_items = text_items.copy()
-    for item in new_text_items:
+    new_items = items.copy()
+    for item in new_items:
         # Extract item values
         item_id = item.get("id")
         item_text = item.get("text")
@@ -44,7 +44,7 @@ def generate_audio():
         item["audioFileName"] = file_name
         item["audioDuration"] = duration
     
-    return jsonify({"status": "success", "newTextItems": new_text_items})
+    return jsonify({"status": "success", "newItems": new_items})
 
 @app.route("/api/get-audio/<audio_file_name>")
 def get_audio(audio_file_name):
@@ -71,15 +71,15 @@ def check_eleven_labs_limit():
 @app.route("/api/combine-audio", methods=["POST"])
 def combine_audio():
     data = request.json
-    text_items = data.get("textItems")
+    items = data.get("items")
     
-    if not text_items:
+    if not items:
         return jsonify({"status": "error", "message": "No text items provided"}), 400
     
     try:
         combined_audio = AudioSegment.silent(duration=0)  # Start with a silent audio segment
         
-        for item in text_items:
+        for item in items:
             audio_file_name = item.get("audioFileName")
             if not audio_file_name:
                 return jsonify({"status": "error", "message": f"Missing audioFileName for item {item}"}), 400
@@ -115,3 +115,23 @@ def find_word_chat_gpt():
     words = summarize_to_one_word(message)
     
     return jsonify({"status": "success", "queryTags": words})
+
+
+@app.route("/api/find-video-pixabay", methods=['POST'])
+def find_video_pixabay_route():
+    data = request.json
+    query_tag = data.get("queryTag")
+    page = data.get("page", 1)
+    
+    # Check if queryTag is provided
+    if not query_tag:
+        return jsonify({"status": "error", "message": "No queryTag provided"}), 400
+    
+    # find video on pixabay
+    video_objects = find_pixabay_video(query_tag, page=page)
+    
+    return jsonify({
+        "status": "success",
+        "message": "Video found",
+        "videoObjects": video_objects
+        })

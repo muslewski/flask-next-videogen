@@ -5,7 +5,7 @@ export default function GenerateVideoButton() {
   return (
     <Button>
       <Video size={18} />
-      Szukaj Video
+      Szukaj filmów
     </Button>
   );
 }

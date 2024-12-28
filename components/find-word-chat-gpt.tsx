@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { LoaderCircle, Sparkle } from "lucide-react";
+import { useEffect, useState } from "react";
 import { SiOpenai } from "react-icons/si";
 
 interface FindOneWordChatGptProps {
@@ -51,11 +52,16 @@ export default function FindWordChatGpt({
     }
   };
 
+  // Run once to get the initial query tags
+  useEffect(() => {
+    findWordWithChatGPT();
+  }, []);
+
   return (
     <div className="space-y-6 h-fit min-w-[550px] py-4 px-6 bg-gradient-to-br from-gray-800/5 rounded-xl">
       <b className="flex gap-2 items-center">
         <SiOpenai size={18} />
-        Instrukcja generowania Chat GPT
+        Instrukcja Chat GPT (Szukanie kluczowych słów)
       </b>
 
       <div className="space-y-2">
@@ -72,16 +78,26 @@ export default function FindWordChatGpt({
 
       <div className="flex items-center space-x-12">
         <Button disabled={isLoading} onClick={findWordWithChatGPT}>
-          {isLoading ? "Myślę..." : "Definiuj"}
+          {isLoading ? (
+            <>
+              <LoaderCircle size={18} className="animate-spin" />
+              Myślę...
+            </>
+          ) : (
+            <>
+              <Sparkle size={18} />
+              Definiuj
+            </>
+          )}
         </Button>
-        <div className="space-x-3">
+        <div className="flex gap-3 flex-wrap items-center">
           <span>Wybierz:</span>
           {queryTags.map((tag, index) => (
             <Button
               key={index}
               onClick={() => setQueryTag(tag)}
               variant={queryTag === tag ? "default" : "outline"}
-              className="font-medium px-3 py-1 rounded-lg cursor-pointer transition-all"
+              className="font-medium px-3 py-1 rounded-lg cursor-pointer transition-all max-w-[150px] overflow-hidden"
             >
               {tag}
             </Button>

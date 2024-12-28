@@ -31,7 +31,7 @@ export default function DeleteAll({ onDeleteAll }: DeleteAllProps) {
       <DialogTrigger asChild>
         <Button variant="destructive" onClick={() => setOpen(true)}>
           <Trash2 size={18} />
-          Reset
+          Resetuj projekt
         </Button>
       </DialogTrigger>
       <DialogContent
@@ -41,7 +41,7 @@ export default function DeleteAll({ onDeleteAll }: DeleteAllProps) {
         }}
       >
         <DialogHeader>
-          <DialogTitle>Potwierdź Usuwanie Całkowite</DialogTitle>
+          <DialogTitle>Potwierdź usuwanie całkowite</DialogTitle>
           <DialogDescription>
             Czy na pewno chcesz usunąć wszystkie elementy? Tej akcji nie można
             cofnąć.

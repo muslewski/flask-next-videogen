@@ -1,13 +1,11 @@
 "use client";
 
-import { TextItemProps } from "@/components/home";
+import { useStoredValueContext } from "@/components/stored-value-context";
 import { useEffect, useState } from "react";
 
-export default function ElevenLabsCredits({
-  isGenerating,
-}: {
-  isGenerating: boolean;
-}) {
+export default function ElevenLabsCredits() {
+  const { isGeneratingAudio } = useStoredValueContext();
+
   const [totalCredits, setTotalCredits] = useState<number | null>(null);
   const [usedCredits, setUsedCredits] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -35,7 +33,7 @@ export default function ElevenLabsCredits({
     };
 
     fetchCredits();
-  }, [isGenerating]);
+  }, [isGeneratingAudio]);
 
   const percentage =
     totalCredits && usedCredits ? (usedCredits / totalCredits) * 100 : 0;

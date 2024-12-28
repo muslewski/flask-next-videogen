@@ -3,3 +3,4 @@ moviepy
 elevenlabs
 pydub
 openai
+pexels-api

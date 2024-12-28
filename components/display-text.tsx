@@ -1,17 +1,17 @@
 "use client";
 
-import { TextItemProps } from "@/components/home";
+import {
+  useStoredValueContext,
+  VideoObject,
+} from "@/components/stored-value-context";
 import TextItem from "@/components/text-item";
 import { VoiceActor } from "@/helper/available-voice-actors";
 import { Reorder } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
 
-interface DisplayTextProps {
-  items: TextItemProps[];
-  setItems: React.Dispatch<React.SetStateAction<TextItemProps[]>>;
-}
+export default function DisplayText() {
+  const { setUsedVideoIDs, setItems, items } = useStoredValueContext();
 
-export default function DisplayText({ items, setItems }: DisplayTextProps) {
   const handleEdit = (
     id: string,
     newText: string,
@@ -30,6 +30,8 @@ export default function DisplayText({ items, setItems }: DisplayTextProps) {
               voice: newVoiceActor,
               audioFileName: null,
               audioDuration: null,
+              videoFileName: null,
+              videoDuration: null,
             }
           : item
       )
@@ -38,6 +40,19 @@ export default function DisplayText({ items, setItems }: DisplayTextProps) {
 
   const handleDelete = (id: string) => {
     setItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  };
+
+  const updateVideoData = (id: string, newVideo: VideoObject) => {
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, video: newVideo } : item
+      )
+    );
+
+    // Add new video id to used ones
+    setUsedVideoIDs((prevIds) =>
+      prevIds ? [...prevIds, newVideo.id] : [newVideo.id]
+    );
   };
 
   return (
@@ -58,6 +73,7 @@ export default function DisplayText({ items, setItems }: DisplayTextProps) {
             index={index}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            updateVideoData={updateVideoData}
           />
         ))}
       </Reorder.Group>

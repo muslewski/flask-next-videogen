@@ -7,45 +7,38 @@ import DeleteAll from "@/components/delete-all";
 import DisplayText from "@/components/display-text";
 import ElevenLabsCredits from "@/components/eleven-labs-credits";
 import GenerateAudioButton from "@/components/generate-audio-button";
+import GenerateScenarioButton from "@/components/generate-scenario-button";
 import GenerateVideoButton from "@/components/generate-video-button";
+import {
+  ItemProps,
+  useStoredValueContext,
+} from "@/components/stored-value-context";
 import { VoiceActor } from "@/helper/available-voice-actors";
 import { removeFile } from "@/helper/remove-file";
 import Cookies from "js-cookie";
-import { set } from "lodash";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-export interface TextItemProps {
-  id: string;
-  text: string;
-  voice: VoiceActor | null;
-  audioFileName: string | null;
-  audioDuration: number | null;
-}
-
 export default function Home() {
-  const [textItems, setTextItems] = useState<TextItemProps[]>([]);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const { items, setItems, combinedFileName, setCombinedFileName } =
+    useStoredValueContext();
 
-  const [isCombining, setIsCombining] = useState(false);
-  const [combinedAudioUrl, setCombinedAudioUrl] = useState<string | null>(null);
-
-  // Load textItems from cookie on component mount
+  // Load items from cookie on component mount
   useEffect(() => {
-    const savedItems = Cookies.get("textItems");
+    const savedItems = Cookies.get("items");
     if (savedItems) {
-      setTextItems(JSON.parse(savedItems));
+      setItems(JSON.parse(savedItems));
     }
   }, []);
 
-  // Save textItems to cookie whenever it changes
+  // Save items to cookie whenever it changes
   useEffect(() => {
-    Cookies.set("textItems", JSON.stringify(textItems), { expires: 7 });
-    console.log(textItems);
-  }, [textItems]);
+    Cookies.set("items", JSON.stringify(items), { expires: 7 });
+    console.log(items);
+  }, [items]);
 
-  // Add text from AddText component
-  const handleAddText = (
+  // Add item from AddText component
+  const handleAddItem = (
     text: string,
     voiceActor: VoiceActor | null,
     audioDuration?: number | null
@@ -61,65 +54,55 @@ export default function Home() {
           voice: voiceActor,
           audioFileName: null,
           audioDuration: audioDuration,
-        } as TextItemProps)
+          video: null,
+        } as ItemProps)
     );
     // Add new items to the list
-    setTextItems((prev) => [...prev, ...newItems]);
+    setItems((prev) => [...prev, ...newItems]);
   };
 
-  // Delete all text items
+  // Delete all items
   const handleDeleteAll = () => {
     // Delete every audio file
-    textItems.forEach((item) => {
+    items.forEach((item) => {
       if (item.audioFileName) {
         removeFile(item.audioFileName);
       }
     });
 
-    if (combinedAudioUrl) {
-      removeFile(combinedAudioUrl);
-      setCombinedAudioUrl(null);
+    if (combinedFileName) {
+      console.log("CombinedURL", combinedFileName);
+      removeFile(combinedFileName);
+      setCombinedFileName(null);
     }
 
-    setTextItems([]);
+    setItems([]);
   };
 
   return (
     <div className="flex min-h-screen">
       {/* Left Side */}
       <div className="w-1/3 p-6 sticky top-0 h-screen overflow-auto flex flex-col gap-12 justify-between">
-        <AddText onAdd={handleAddText} />
+        <AddText onAdd={handleAddItem} />
 
         <div className="flex flex-col gap-12">
-          <CombineAudioDisplay
-            isCombining={isCombining}
-            combinedAudioUrl={combinedAudioUrl}
-          />
+          <CombineAudioDisplay />
 
           <div className="flex flex-wrap items-center gap-6 self-end bg-gradient-to-br from-gray-600/5 rounded-xl px-4 py-3">
+            <GenerateScenarioButton />
+            <GenerateAudioButton />
             <GenerateVideoButton />
-            <GenerateAudioButton
-              textItems={textItems}
-              setTextItems={setTextItems}
-              setIsGenerating={setIsGenerating}
-            />
-            <CombineAudioButton
-              textItems={textItems}
-              setIsCombining={setIsCombining}
-              isCombining={isCombining}
-              setCombinedAudioUrl={setCombinedAudioUrl}
-              combinedAudioUrl={combinedAudioUrl}
-            />
+            <CombineAudioButton />
 
             <DeleteAll onDeleteAll={handleDeleteAll} />
           </div>
-          <ElevenLabsCredits isGenerating={isGenerating} />
+          <ElevenLabsCredits />
         </div>
       </div>
 
       {/* Right Side */}
       <div className="w-2/3 p-6">
-        <DisplayText items={textItems} setItems={setTextItems} />
+        <DisplayText />
       </div>
     </div>
   );

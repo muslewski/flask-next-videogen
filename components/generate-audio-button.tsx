@@ -1,27 +1,19 @@
-import { TextItemProps } from "@/components/home";
+import { useStoredValueContext } from "@/components/stored-value-context";
 import { Button } from "@/components/ui/button";
 import { AudioLines } from "lucide-react";
 
-interface GenerateAudioProps {
-  textItems: TextItemProps[];
-  setTextItems: React.Dispatch<React.SetStateAction<TextItemProps[]>>;
-  setIsGenerating: React.Dispatch<React.SetStateAction<boolean>>;
-}
+export default function GenerateAudioButton() {
+  const { items, setItems, setIsGeneratingAudio } = useStoredValueContext();
 
-export default function GenerateAudioButton({
-  textItems,
-  setTextItems,
-  setIsGenerating,
-}: GenerateAudioProps) {
   const handleGenerateAudio = async () => {
     try {
-      setIsGenerating(true);
+      setIsGeneratingAudio(true);
       const response = await fetch("/api/generate-audio", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ textItems }),
+        body: JSON.stringify({ items }),
       });
 
       if (!response.ok) {
@@ -29,21 +21,21 @@ export default function GenerateAudioButton({
       }
 
       // Destructure the data and message from the response
-      const { newTextItems } = await response.json();
+      const { newItems } = await response.json();
 
       // Update the text items
-      setTextItems(newTextItems);
+      setItems(newItems);
     } catch (error) {
       console.error("Error generating audio:", error);
     } finally {
-      setIsGenerating(false);
+      setIsGeneratingAudio(false);
     }
   };
 
   return (
     <Button onClick={handleGenerateAudio}>
       <AudioLines size={18} />
-      Generuj Audio
+      Generuj dźwięki
     </Button>
   );
 }

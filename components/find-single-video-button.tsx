@@ -3,7 +3,7 @@
 import AudioDetails from "@/components/audio-details";
 import FindMatchingVideo from "@/components/find-matching-video";
 import FindWordChatGpt from "@/components/find-word-chat-gpt";
-import { TextItemProps } from "@/components/home";
+import { ItemProps, VideoObject } from "@/components/stored-value-context";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,17 +15,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 
 import { Video } from "lucide-react";
 import { useState } from "react";
 
 interface FindSigmleVideoButtonProps {
-  item: TextItemProps;
+  item: ItemProps;
+  updateVideoData: (id: string, newVideo: VideoObject) => void;
 }
 
 export default function FindSingleVideoButton({
   item,
+  updateVideoData,
 }: FindSigmleVideoButtonProps) {
   const [findTagInstruction, setFindTagInstruction] = useState<string>(
     `Please extract exactly three single keywords from the following video script. The keywords should be:
@@ -36,12 +37,25 @@ export default function FindSingleVideoButton({
 - No phrases or complex terms
 - Example response format: "tree, water, sunset"
 
-Return only result:`
+Return only result from:`
   );
   const [queryTag, setQueryTag] = useState<string>("");
+  const [newVideo, setNewVideo] = useState<VideoObject | null>(null);
+  const initialVideo = item.video as VideoObject;
+  const handleSaveChanges = () => {
+    if (newVideo && newVideo !== initialVideo) {
+      updateVideoData(item.id, newVideo);
+    }
+  };
+
+  const handleDialogClose = (isOpen: boolean) => {
+    if (!isOpen) {
+      setNewVideo(initialVideo);
+    }
+  };
 
   return (
-    <Dialog>
+    <Dialog onOpenChange={handleDialogClose}>
       <DialogTrigger asChild>
         <Button
           size="icon"
@@ -61,7 +75,7 @@ Return only result:`
 
         <div className="flex gap-12">
           <div className="max-w-xl space-y-12">
-            <AudioDetails fileName={item.audioFileName} />
+            <AudioDetails fileName={item.audioFileName} voice={item.voice} />
             <FindWordChatGpt
               findTagInstruction={findTagInstruction}
               setFindTagInstruction={setFindTagInstruction}
@@ -72,13 +86,22 @@ Return only result:`
           </div>
 
           <div className="w-full">
-            <FindMatchingVideo queryTag={queryTag} />
+            <FindMatchingVideo
+              queryTag={queryTag}
+              setQueryTag={setQueryTag}
+              newVideo={newVideo}
+              setNewVideo={setNewVideo}
+            />
           </div>
         </div>
 
         <DialogFooter className="">
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleSaveChanges}
+            >
               Zapisz zmiany
             </Button>
           </DialogClose>

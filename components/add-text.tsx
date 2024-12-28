@@ -7,7 +7,6 @@ import { useState } from "react";
 import { VoiceActor } from "@/helper/available-voice-actors";
 import VoiceSelector from "@/components/voice-selector";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Input } from "@/components/ui/input";
 
 interface AddTextProps {
   onAdd: (
@@ -94,7 +93,7 @@ export default function AddText({ onAdd }: AddTextProps) {
         </Alert>
       )}
 
-      <div className="flex items-center space-x-4 pt-10">
+      {/* <div className="flex items-center space-x-4 pt-10">
         <Input
           type="number"
           placeholder="Czas trwania (sekundy)"
@@ -103,7 +102,7 @@ export default function AddText({ onAdd }: AddTextProps) {
           className="flex-grow"
         />
         <Button onClick={handleAddBreak}>Dodaj Przerwę</Button>
-      </div>
+      </div> */}
     </div>
   );
 }

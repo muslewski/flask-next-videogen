@@ -1,8 +1,8 @@
 import { DeleteDialog } from "@/components/delete-dialog";
 import { EditDialog } from "@/components/edit-dialog";
 import FindSingleVideoButton from "@/components/find-single-video-button";
-import { TextItemProps } from "@/components/home";
 import PlayAudioButton from "@/components/play-audio-button";
+import { ItemProps, VideoObject } from "@/components/stored-value-context";
 import { VoiceActor } from "@/helper/available-voice-actors";
 import { formatTime } from "@/helper/format-time";
 import { removeFile } from "@/helper/remove-file";
@@ -10,7 +10,7 @@ import clsx from "clsx";
 import { Reorder } from "framer-motion";
 
 interface TextItemComponentProps {
-  item: TextItemProps;
+  item: ItemProps;
   index: number;
   onEdit: (
     id: string,
@@ -18,6 +18,7 @@ interface TextItemComponentProps {
     newVoiceActor: VoiceActor | null
   ) => void;
   onDelete: (id: string) => void;
+  updateVideoData: (id: string, newVideo: VideoObject) => void;
 }
 
 function detectNumbers(text: string): boolean {
@@ -29,6 +30,7 @@ export default function TextItem({
   index,
   onEdit,
   onDelete,
+  updateVideoData,
 }: TextItemComponentProps) {
   const handleEdit = (newText: string, newVoiceActor: VoiceActor | null) => {
     //  Remove audio file when text is edited
@@ -88,7 +90,7 @@ export default function TextItem({
         )}
       </div>
       <div className="space-x-2 flex-shrink-0">
-        <FindSingleVideoButton item={item} />
+        <FindSingleVideoButton item={item} updateVideoData={updateVideoData} />
         {item.audioFileName && <PlayAudioButton file={item.audioFileName} />}
 
         <EditDialog

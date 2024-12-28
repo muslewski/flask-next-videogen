@@ -1,29 +1,22 @@
 "use client";
 
-import { TextItemProps } from "@/components/home";
+import { useStoredValueContext } from "@/components/stored-value-context";
 import { Button } from "@/components/ui/button";
 import { removeFile } from "@/helper/remove-file";
 import { Blend } from "lucide-react";
 import { toast } from "sonner";
-import { text } from "stream/consumers";
 
-interface CombineAudioProps {
-  textItems: TextItemProps[];
-  setIsCombining: React.Dispatch<React.SetStateAction<boolean>>;
-  isCombining: boolean;
-  setCombinedAudioUrl: React.Dispatch<React.SetStateAction<string | null>>;
-  combinedAudioUrl: string | null;
-}
+export default function CombineAudioButton() {
+  const {
+    items,
+    setIsCombiningProject,
+    isCombiningProject,
+    combinedFileName,
+    setCombinedFileName,
+  } = useStoredValueContext();
 
-export default function CombineAudioButton({
-  textItems,
-  setIsCombining,
-  isCombining,
-  setCombinedAudioUrl,
-  combinedAudioUrl,
-}: CombineAudioProps) {
   const checkIfEveryTextItemHasAudio = () => {
-    return textItems.every((item) => item.audioFileName !== null);
+    return items.every((item) => item.audioFileName !== null);
   };
 
   const handleCombineAudio = async () => {
@@ -35,14 +28,14 @@ export default function CombineAudioButton({
       return;
     }
 
-    if (textItems.length === 0) return;
+    if (items.length === 0) return;
 
-    setIsCombining(true);
+    setIsCombiningProject(true);
 
     // Remove previous combined audio if it exists
-    if (combinedAudioUrl) {
-      removeFile(combinedAudioUrl);
-      setCombinedAudioUrl(null);
+    if (combinedFileName) {
+      removeFile(combinedFileName);
+      setCombinedFileName(null);
     }
 
     try {
@@ -51,12 +44,12 @@ export default function CombineAudioButton({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ textItems }),
+        body: JSON.stringify({ items }),
       });
 
       const data = await response.json();
       const { combinedAudioFileName } = data;
-      setCombinedAudioUrl(combinedAudioFileName);
+      setCombinedFileName(combinedAudioFileName);
 
       if (!response.ok) {
         throw new Error(data.message);
@@ -64,15 +57,15 @@ export default function CombineAudioButton({
     } catch (error) {
       console.error("Error combining audio:", error);
     } finally {
-      setIsCombining(false);
+      setIsCombiningProject(false);
     }
   };
 
   return (
     <Button onClick={handleCombineAudio} className="flex items-center">
       <Blend size={18} />
-      <span className="ml-2 w-16 text-center">
-        {isCombining ? "Łączenie" : "Połącz"}
+      <span className="ml-2 w-28 text-center">
+        {isCombiningProject ? "Łączenie" : "Połącz wszystko"}
       </span>
     </Button>
   );
