@@ -3,7 +3,7 @@ from flask import Flask,request, jsonify, send_file
 from flask_cors import CORS
 
 from api.chat_gpt import summarize_to_one_word
-from api.constants import AUDIO_DIR
+from api.constants import AUDIO_DIR, VIDEO_DIR
 from api.eleven_labs import check_client_limit, generate_blank_audio, generate_eleven_labs_audio
 from pydub import AudioSegment
 import uuid
@@ -52,6 +52,12 @@ def get_audio(audio_file_name):
     audio_file_path = os.path.join(AUDIO_DIR, audio_file_name)
     return send_file(audio_file_path)
 
+@app.route("/api/get-video/<video_file_name>")
+def get_video(video_file_name):
+    video_file_path = os.path.join(VIDEO_DIR, video_file_name)
+    return send_file(video_file_path)
+
+
 @app.route("/api/remove-audio/<audio_file_name>", methods=["DELETE"])
 def remove_audio(audio_file_name):
     audio_file_path = os.path.join(AUDIO_DIR, audio_file_name)
@@ -61,6 +67,17 @@ def remove_audio(audio_file_name):
         return jsonify({"status": "success", "message": "Audio file removed"})
     else:
         return jsonify({"status": "error", "message": "Audio file not found"})
+    
+    
+@app.route("/api/remove-video/<video_file_name>", methods=["DELETE"])
+def remove_video(video_file_name):
+    video_file_path = os.path.join(VIDEO_DIR, video_file_name)
+    
+    if os.path.exists(video_file_path):
+        os.remove(video_file_path)
+        return jsonify({"status": "success", "message": "Video file removed"})
+    else:
+        return jsonify({"status": "error", "message": "Video file not found"})
 
 @app.route("/api/eleven-labs-credits")
 def check_eleven_labs_limit():
@@ -142,17 +159,15 @@ def find_video_pixabay_route():
 @app.route("/api/save-video", methods=["POST"])
 def save_video_route():
     data = request.json
-    item_id = data.get("itemId")
+    # change id to uuid
+    id = uuid.uuid4()
     video_url = data.get("videoUrl")
-    
-    if not item_id:
-        return jsonify({"status": "error", "message": "No itemId provided"}), 400
     
     if not video_url:
         return jsonify({"status": "error", "message": "No videoUrl provided"}), 400
     
     try:
-        video_file_name = save_video(item_id, video_url)
+        video_file_name = save_video(id, video_url)
         return jsonify({"status": "success", "message": "Video saved successfully", "videoFileName": video_file_name})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500

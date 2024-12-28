@@ -1,14 +1,54 @@
+import { useStoredValueContext } from "@/components/stored-value-context";
 import { Button } from "@/components/ui/button";
-import { FileVideo, Video } from "lucide-react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { FileVideo } from "lucide-react";
 
 export default function PreviewVideoButton({ file }: { file: string }) {
+  const { isSavingVideo } = useStoredValueContext();
+
   return (
-    <Button
-      size="icon"
-      variant="outline"
-      className="bg-gray-950/20 hover:bg-gray-600"
-    >
-      <FileVideo size={18} />
-    </Button>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          size="icon"
+          variant="outline"
+          className="bg-gray-950/20 hover:bg-gray-600"
+          disabled={isSavingVideo}
+        >
+          <FileVideo size={18} />
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-7xl">
+        <DialogHeader>
+          <DialogTitle>Podejrzyj Video</DialogTitle>
+          <DialogDescription>
+            Tutaj możesz podejrzeć jak wygląda Twoje video.
+          </DialogDescription>
+        </DialogHeader>
+
+        <video controls autoPlay className="w-full h-auto rounded-lg">
+          <source src={`/api/get-video/${file}`} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button type="button" variant="secondary">
+              Zamknij Podgląd
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

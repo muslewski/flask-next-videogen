@@ -38,6 +38,8 @@ interface StoredValueContextProps {
   setIsCombiningProject: React.Dispatch<React.SetStateAction<boolean>>;
   combinedFileName: string | null;
   setCombinedFileName: React.Dispatch<React.SetStateAction<string | null>>;
+  isSavingVideo: boolean;
+  setIsSavingVideo: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const StoredValueContext = createContext<StoredValueContextProps | undefined>(
@@ -65,6 +67,11 @@ export const StoredValueProvider = ({ children }: { children: ReactNode }) => {
    */
   const [combinedFileName, setCombinedFileName] = useState<string | null>(null);
 
+  /**
+   * Boolean that indicates if we are saving video in Pixabay, Pexels, etc.
+   */
+  const [isSavingVideo, setIsSavingVideo] = useState<boolean>(false);
+
   return (
     <StoredValueContext.Provider
       value={{
@@ -76,6 +83,8 @@ export const StoredValueProvider = ({ children }: { children: ReactNode }) => {
         setIsCombiningProject,
         combinedFileName,
         setCombinedFileName,
+        isSavingVideo,
+        setIsSavingVideo,
       }}
     >
       {children}

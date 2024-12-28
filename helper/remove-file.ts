@@ -1,20 +1,20 @@
-export const removeFile = async (fileName: string) => {
+export const removeFile = async (fileName: string, type: "video" | "audio") => {
   try {
-    const response = await fetch(`/api/remove-audio/${fileName}`, {
+    const response = await fetch(`/api/remove-${type}/${fileName}`, {
       method: "DELETE",
     });
 
     if (!response.ok) {
-      throw new Error("Failed to remove audio file");
+      throw new Error(`Failed to remove ${type} file`);
     }
 
     const result = await response.json();
     if (result.status === "success") {
-      console.log("Audio file removed successfully");
+      console.log(`File ${type} removed successfully`);
     } else {
-      console.error("Error removing audio file:", result.message);
+      console.error(`Error removing ${type} file:`, result.message);
     }
   } catch (error) {
-    console.error("Error removing audio file:", error);
+    console.error(`Error removing ${type} file:`, error);
   }
 };

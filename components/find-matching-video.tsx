@@ -201,6 +201,12 @@ export default function FindMatchingVideo({
                 (item) => item.video?.id === object.id
               );
 
+              console.log("object.id:", object.id);
+              console.log("newVideo?.id:", newVideo?.id);
+              console.log("initialVideo?.id:", initialVideo?.id);
+              console.log("isSelected:", isSelected);
+              console.log("isSaved:", isSaved);
+
               return (
                 <li
                   key={object.id}

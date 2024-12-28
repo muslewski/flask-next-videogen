@@ -35,14 +35,17 @@ export default function TextItem({
 }: TextItemComponentProps) {
   const handleEdit = (newText: string, newVoiceActor: VoiceActor | null) => {
     //  Remove audio file when text is edited
-    if (item.audioFileName) removeFile(item.audioFileName);
+    if (item.audioFileName) removeFile(item.audioFileName, "audio");
 
     onEdit(item.id, newText, newVoiceActor);
   };
 
   const handleDelete = async () => {
     // Remove audio file
-    if (item.audioFileName) removeFile(item.audioFileName);
+    if (item.audioFileName) removeFile(item.audioFileName, "audio");
+    // Remove video file
+    if (item.video?.videoFileName)
+      removeFile(item.video.videoFileName, "video");
 
     onDelete(item.id);
   };

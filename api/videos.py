@@ -3,8 +3,8 @@ import requests
 from api.constants import VIDEO_DIR
 
 
-def save_video(item_id, video_url):
-    video_file_name = f"{item_id}.mp4"
+def save_video(id, video_url):
+    video_file_name = f"{id}.mp4"
     video_file_path = os.path.join(VIDEO_DIR, video_file_name)
     
     response = requests.get(video_url, stream=True)
