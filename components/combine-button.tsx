@@ -4,6 +4,7 @@ import { useStoredValueContext } from "@/components/stored-value-context";
 import { Button } from "@/components/ui/button";
 import { removeFile } from "@/helper/remove-file";
 import { Blend } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 export default function CombineButton() {
@@ -20,7 +21,9 @@ export default function CombineButton() {
   };
 
   const checkIfEveryTextItemHasVideo = () => {
-    return items.every((item) => item.video?.videoFileName !== null);
+    return items.every(
+      (item) => item.video && item.video.videoFileName !== null
+    );
   };
 
   const handleCombineMedia = async () => {
@@ -46,7 +49,8 @@ export default function CombineButton() {
 
     // Remove previous combined audio if it exists
     if (combinedFileName) {
-      removeFile(combinedFileName, "video");
+      console.log("REMOVING FILE", combinedFileName);
+      await removeFile(combinedFileName, "output");
       setCombinedFileName(null);
     }
 
@@ -60,21 +64,51 @@ export default function CombineButton() {
       });
 
       const data = await response.json();
-      const { combinedMediaFileName } = data;
-      setCombinedFileName(combinedMediaFileName);
 
-      if (!response.ok) {
-        throw new Error(data.message);
+      if (data.status === "success") {
+        pollTaskStatus(data.taskId);
       }
     } catch (error) {
-      console.error("Error combining media:", error);
-    } finally {
+      toast("Błąd!", {
+        description: "Wystąpił błąd podczas łączenia mediów.",
+      });
+      setIsCombiningProject(false);
+    }
+  };
+
+  const pollTaskStatus = async (taskId: string) => {
+    try {
+      const response = await fetch(`/api/task-status/${taskId}`);
+      const data = await response.json();
+
+      if (data.status === "completed") {
+        setCombinedFileName(data.fileName);
+        toast("Sukces!", {
+          description: "Łączenie mediów zakończone.",
+        });
+        setIsCombiningProject(false);
+      } else if (data.status === "error") {
+        toast("Błąd!", {
+          description: data.message,
+        });
+        setIsCombiningProject(false);
+      } else {
+        setTimeout(() => pollTaskStatus(taskId), 1000); // Poll every 1s
+      }
+    } catch (error) {
+      toast("Błąd!", {
+        description: "Wystąpił błąd podczas sprawdzania statusu zadania.",
+      });
       setIsCombiningProject(false);
     }
   };
 
   return (
-    <Button onClick={handleCombineMedia} className="flex items-center">
+    <Button
+      onClick={handleCombineMedia}
+      disabled={isCombiningProject}
+      className="flex items-center"
+    >
       <Blend size={18} />
       <span className="ml-2 w-28 text-center">
         {isCombiningProject ? "Łączenie" : "Połącz wszystko"}

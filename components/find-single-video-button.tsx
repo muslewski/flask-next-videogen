@@ -140,7 +140,11 @@ Return only result from:`
 
         <div className="flex gap-12">
           <div className="max-w-xl space-y-12">
-            <AudioDetails fileName={item.audioFileName} voice={item.voice} />
+            <AudioDetails
+              fileName={item.audioFileName}
+              duration={item.audioDuration}
+              voice={item.voice}
+            />
             <FindWordChatGpt
               findTagInstruction={findTagInstruction}
               setFindTagInstruction={setFindTagInstruction}
@@ -157,6 +161,7 @@ Return only result from:`
               newVideo={newVideo}
               setNewVideo={setNewVideo}
               initialVideo={initialVideo}
+              audioDuration={item.audioDuration}
             />
           </div>
         </div>

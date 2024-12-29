@@ -4,10 +4,10 @@ import {
   useStoredValueContext,
   VideoObject,
 } from "@/components/stored-value-context";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import VideosControls from "@/components/videos-controls";
-import clsx from "clsx";
 import { debounce } from "lodash";
 import {
   ArrowBigLeft,
@@ -30,6 +30,7 @@ interface FindMatchingVideoProps {
   newVideo: VideoObject | null;
   setNewVideo: React.Dispatch<React.SetStateAction<VideoObject | null>>;
   initialVideo: VideoObject | null;
+  audioDuration: number | null;
 }
 
 export default function FindMatchingVideo({
@@ -38,6 +39,7 @@ export default function FindMatchingVideo({
   newVideo,
   setNewVideo,
   initialVideo,
+  audioDuration = 0,
 }: FindMatchingVideoProps) {
   const { items } = useStoredValueContext();
   const [source, setSource] = useState<
@@ -201,11 +203,15 @@ export default function FindMatchingVideo({
                 (item) => item.video?.id === object.id
               );
 
-              console.log("object.id:", object.id);
-              console.log("newVideo?.id:", newVideo?.id);
-              console.log("initialVideo?.id:", initialVideo?.id);
-              console.log("isSelected:", isSelected);
-              console.log("isSaved:", isSaved);
+              let tooShort = false;
+              if (audioDuration && object.videoDuration)
+                tooShort = object.videoDuration < audioDuration;
+
+              // console.log("object.id:", object.id);
+              // console.log("newVideo?.id:", newVideo?.id);
+              // console.log("initialVideo?.id:", initialVideo?.id);
+              // console.log("isSelected:", isSelected);
+              // console.log("isSaved:", isSaved);
 
               return (
                 <li
@@ -227,30 +233,34 @@ export default function FindMatchingVideo({
                     <source src={lowestResolutionVideo} type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>
-                  <Button
-                    className="absolute top-2 right-2"
-                    onClick={() => setNewVideo(object)}
-                    variant={isSelected ? "default" : "outline"}
-                    disabled={isAlreadyUsed && !isSaved}
-                  >
-                    {isSelected ? (
-                      <>
-                        <FileCheck size={18} /> Wybrane
-                      </>
-                    ) : isSaved ? (
-                      <>
-                        <Save size={18} /> Zapisane
-                      </>
-                    ) : isAlreadyUsed ? (
-                      <>
-                        <Frown size={18} /> Wykorzystane
-                      </>
-                    ) : (
-                      <>
-                        <MousePointerClick size={18} /> Wybierz
-                      </>
+                  <div className="absolute top-2 right-2 flex gap-4">
+                    {tooShort && !isAlreadyUsed && (
+                      <Badge variant="destructive">Za krótki</Badge>
                     )}
-                  </Button>
+                    <Button
+                      onClick={() => setNewVideo(object)}
+                      variant={isSelected ? "default" : "outline"}
+                      disabled={(isAlreadyUsed && !isSaved) || tooShort}
+                    >
+                      {isSelected ? (
+                        <>
+                          <FileCheck size={18} /> Wybrane
+                        </>
+                      ) : isSaved ? (
+                        <>
+                          <Save size={18} /> Zapisane
+                        </>
+                      ) : isAlreadyUsed ? (
+                        <>
+                          <Frown size={18} /> Wykorzystane
+                        </>
+                      ) : (
+                        <>
+                          <MousePointerClick size={18} /> Wybierz
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </li>
               );
             })}

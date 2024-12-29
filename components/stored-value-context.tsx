@@ -1,7 +1,13 @@
 "use client";
 
 import { VoiceActor } from "@/helper/available-voice-actors";
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 
 export interface ItemProps {
   id: string;
@@ -71,6 +77,36 @@ export const StoredValueProvider = ({ children }: { children: ReactNode }) => {
    * Boolean that indicates if we are saving video in Pixabay, Pexels, etc.
    */
   const [isSavingVideo, setIsSavingVideo] = useState<boolean>(false);
+
+  // Load items from localStorage on component mount
+  useEffect(() => {
+    const savedItems = localStorage.getItem("items");
+    const savedCombinedFileName = localStorage.getItem("combinedFileName");
+
+    if (savedItems) {
+      try {
+        setItems(JSON.parse(savedItems));
+      } catch (error) {
+        console.error("Error parsing saved items:", error);
+      }
+    }
+
+    if (savedCombinedFileName) {
+      setCombinedFileName(savedCombinedFileName);
+    }
+  }, []);
+
+  // Save items to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("items", JSON.stringify(items));
+    console.log("Items saved to localStorage:", items);
+  }, [items]);
+
+  // Save combinedFileName to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("combinedFileName", combinedFileName || "");
+    console.log("Combined file name saved to localStorage:", combinedFileName);
+  }, [combinedFileName]);
 
   return (
     <StoredValueContext.Provider

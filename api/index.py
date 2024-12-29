@@ -1,18 +1,23 @@
+from concurrent.futures import ThreadPoolExecutor
 import os
 from flask import Flask,request, jsonify, send_file
 from flask_cors import CORS
 
 from api.chat_gpt import summarize_to_one_word
-from api.constants import AUDIO_DIR, VIDEO_DIR
+from api.constants import AUDIO_DIR, OUTPUT_DIR, VIDEO_DIR
 from api.eleven_labs import check_client_limit, generate_blank_audio, generate_eleven_labs_audio
-from pydub import AudioSegment
 import uuid
 
+from api.helper import combine_media_together
 from api.pixabay_api import find_pixabay_video
 from api.videos import save_video
 
 app = Flask(__name__)
 CORS(app)
+
+cpu_count = os.cpu_count()
+executor = ThreadPoolExecutor(max_workers=(2 * cpu_count) + 1)
+tasks = {}
 
 @app.route("/api/generate-audio", methods=["POST"])
 def generate_audio():
@@ -57,6 +62,11 @@ def get_video(video_file_name):
     video_file_path = os.path.join(VIDEO_DIR, video_file_name)
     return send_file(video_file_path)
 
+@app.route("/api/get-output/<output_file_name>")
+def get_output(output_file_name):
+    output_file_path = os.path.join(OUTPUT_DIR, output_file_name)
+    return send_file(output_file_path)
+
 
 @app.route("/api/remove-audio/<audio_file_name>", methods=["DELETE"])
 def remove_audio(audio_file_name):
@@ -78,6 +88,18 @@ def remove_video(video_file_name):
         return jsonify({"status": "success", "message": "Video file removed"})
     else:
         return jsonify({"status": "error", "message": "Video file not found"})
+    
+@app.route("/api/remove-output/<output_file_name>", methods=["DELETE"])
+def remove_output(output_file_name):
+    output_file_path = os.path.join(OUTPUT_DIR, output_file_name)
+    
+    print("output_file_path", output_file_path)
+    
+    if os.path.exists(output_file_path):
+        os.remove(output_file_path)
+        return jsonify({"status": "success", "message": "Output file removed"})
+    else:
+        return jsonify({"status": "error", "message": "Output file not found"})
 
 @app.route("/api/eleven-labs-credits")
 def check_eleven_labs_limit():
@@ -86,43 +108,30 @@ def check_eleven_labs_limit():
     return jsonify({"characterCount": character_count, "characterLimit": character_limit})
 
 
-@app.route("/api/combine-audio", methods=["POST"])
-def combine_audio():
+@app.route("/api/combine-media", methods=["POST"])
+def combine_media():
     data = request.json
     items = data.get("items")
     
     if not items:
         return jsonify({"status": "error", "message": "No text items provided"}), 400
     
-    try:
-        combined_audio = AudioSegment.silent(duration=0)  # Start with a silent audio segment
-        
-        for item in items:
-            audio_file_name = item.get("audioFileName")
-            if not audio_file_name:
-                return jsonify({"status": "error", "message": f"Missing audioFileName for item {item}"}), 400
-            
-            audio_file_path = os.path.join(AUDIO_DIR, audio_file_name)
-            if not os.path.exists(audio_file_path):
-                return jsonify({"status": "error", "message": f"Audio file {audio_file_name} not found"}), 404
-            
-            # Load the audio file and append it to the combined audio
-            audio_segment = AudioSegment.from_file(audio_file_path)
-            combined_audio += audio_segment
-        
-        # Save the combined audio to a file
-        combined_audio_file_name = f"combined_{uuid.uuid4()}.mp3"
-        combined_audio_file_path = os.path.join(AUDIO_DIR, combined_audio_file_name)
-        combined_audio.export(combined_audio_file_path, format="mp3")
-        
-        return jsonify({
-            "status": "success",
-            "message": "Audio files combined successfully",
-            "combinedAudioFileName": combined_audio_file_name
-        })
-        
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+    task_id = uuid.uuid4()
+    tasks[task_id] = {"status": "processing"}
+    executor.submit(combine_media_together, items, task_id, tasks, executor)
+    return jsonify({"status": "success", "message": "Media processing started in background", "taskId": task_id}), 202
+
+@app.route("/api/task-status/<task_id>", methods=["GET"])
+def task_status(task_id):
+    try: 
+        task_uuid = uuid.UUID(task_id)
+    except ValueError:
+        return jsonify({"status": "error", "message": "Invalid task ID"}), 404
+    
+    task = tasks.get(task_uuid)
+    if not task:
+        return jsonify({"status": "error", "message": "Invalid task ID"}), 404
+    return jsonify(task)
             
             
 @app.route("/api/find-word-chat-gpt", methods=["POST"])

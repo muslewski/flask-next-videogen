@@ -1,11 +1,15 @@
+import { Alert } from "@/components/ui/alert";
 import { VoiceActor } from "@/helper/available-voice-actors";
+import { formatTime } from "@/helper/format-time";
 import { Headphones } from "lucide-react";
 
 export default function AudioDetails({
   fileName,
+  duration,
   voice,
 }: {
   fileName: string | null;
+  duration: number | null;
   voice: VoiceActor | null;
 }) {
   return (
@@ -16,7 +20,7 @@ export default function AudioDetails({
       </b>
       {voice && (
         <div
-          className="rounded-xl px-3 py-2 w-fit"
+          className="rounded-xl px-4 py-3 w-fit font-semibold"
           style={{
             background: `linear-gradient(45deg, ${voice.color} 20%, transparent)`,
           }}
@@ -24,11 +28,23 @@ export default function AudioDetails({
           {voice.emoji} {voice.name}
         </div>
       )}
-      <audio
-        controls
-        className="rounded-md bg-white"
-        src={`/api/get-audio/${fileName}`}
-      />
+      {duration && (
+        <div>
+          <b>Czas trwania:</b> {formatTime(duration)}
+        </div>
+      )}
+
+      {fileName ? (
+        <audio
+          controls
+          className="rounded-md bg-white"
+          src={`/api/get-audio/${fileName}`}
+        />
+      ) : (
+        <Alert className="font-bold" variant="destructive">
+          Brakuje pliku audio
+        </Alert>
+      )}
     </div>
   );
 }

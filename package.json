@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "flask-dev": "source venv/bin/activate && export FLASK_DEBUG=1 && pip3 install -q -r requirements.txt && python3 -u -m flask --app api/index run -p 5328",
+    "flask-dev": "source venv/bin/activate && export FLASK_DEBUG=1 && pip3 install -q -r requirements.txt && python3 -u -m flask --app api/index run -p 5328 --debug --with-threads",
     "next-dev": "next dev",
     "dev": "concurrently \"pnpm run next-dev\" \"pnpm run flask-dev\" --names \"Next.js,Flask\" --prefix-colors \"magenta,cyan\"",
     "build": "next build",

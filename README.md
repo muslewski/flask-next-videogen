@@ -82,7 +82,8 @@ https://github.com/elevenlabs/elevenlabs-python
 
 ## TODO:
 
-- [ ] Add Functionality for "Połącz Wszystko" Button
+- [ ] Set duration of video item when finding new video
+
 - [x] Add Different Voices Actor
 - [ ] Add Draggable width in Home between two main divs.
 - [ ] Add Settings

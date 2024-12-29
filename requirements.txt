@@ -1,4 +1,5 @@
 Flask
+numpy
 moviepy
 elevenlabs
 pydub

@@ -1,5 +1,3 @@
-"use client";
-
 import AddText from "@/components/add-text";
 import CombineButton from "@/components/combine-button";
 import CombineDisplay from "@/components/combine-display";
@@ -10,26 +8,8 @@ import GenerateAudioButton from "@/components/generate-audio-button";
 import GenerateScenarioButton from "@/components/generate-scenario-button";
 import GenerateVideoButton from "@/components/generate-video-button";
 import { useStoredValueContext } from "@/components/stored-value-context";
-import Cookies from "js-cookie";
-import { useEffect } from "react";
 
 export default function Home() {
-  const { items, setItems } = useStoredValueContext();
-
-  // Load items from cookie on component mount
-  useEffect(() => {
-    const savedItems = Cookies.get("items");
-    if (savedItems) {
-      setItems(JSON.parse(savedItems));
-    }
-  }, []);
-
-  // Save items to cookie whenever it changes
-  useEffect(() => {
-    Cookies.set("items", JSON.stringify(items), { expires: 7 });
-    console.log(items);
-  }, [items]);
-
   return (
     <div className="flex min-h-screen">
       {/* Left Side */}

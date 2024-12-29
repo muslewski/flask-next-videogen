@@ -21,7 +21,7 @@ export default function PreviewVideoButton({ file }: { file: string }) {
         <Button
           size="icon"
           variant="outline"
-          className="bg-gray-950/20 hover:bg-gray-600"
+          className="bg-green-900/30 hover:bg-green-800"
           disabled={isSavingVideo}
         >
           <FileVideo size={18} />

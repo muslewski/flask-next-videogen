@@ -1,3 +1,4 @@
+import { ErrorObject } from "@/components/add-text";
 import {
   Select,
   SelectContent,
@@ -14,12 +15,14 @@ import {
 interface VoiceSelectorProps {
   voice: VoiceActor | null;
   setVoice: React.Dispatch<React.SetStateAction<VoiceActor | null>>;
+  error?: ErrorObject;
   clearError?: () => void;
 }
 
 export default function VoiceSelector({
   voice,
   setVoice,
+  error,
   clearError,
 }: VoiceSelectorProps) {
   return (
@@ -32,8 +35,18 @@ export default function VoiceSelector({
         if (clearError) clearError();
       }}
     >
-      <SelectTrigger>
-        <SelectValue placeholder="Wybierz głos" />
+      <SelectTrigger
+        className={
+          error?.place === "choose-voice"
+            ? "border-red-500/50 text-red-500/50"
+            : ""
+        }
+      >
+        <SelectValue
+          placeholder={
+            error?.place === "choose-voice" ? error.text : "Wybierz głos"
+          }
+        />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>

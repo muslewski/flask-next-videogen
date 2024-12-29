@@ -6,13 +6,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { VoiceActor } from "@/helper/available-voice-actors";
 import VoiceSelector from "@/components/voice-selector";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   ItemProps,
   useStoredValueContext,
 } from "@/components/stored-value-context";
 import { v4 as uuidv4 } from "uuid";
 import { Input } from "@/components/ui/input";
+import clsx from "clsx";
+
+export interface ErrorObject {
+  text: string;
+  place: "choose-voice" | "add-break" | "textarea" | "";
+}
 
 export default function AddText() {
   const { setItems } = useStoredValueContext();
@@ -20,13 +25,16 @@ export default function AddText() {
   const [currentVoiceActor, setCurrentVoiceActor] = useState<VoiceActor | null>(
     null
   );
-  const [error, setError] = useState("");
+  const [error, setError] = useState<ErrorObject>({ text: "", place: "" });
   const [breakDuration, setBreakDuration] = useState<number>(1);
 
   const handleAdd = () => {
     // Check if voice actor is selected
     if (!currentVoiceActor) {
-      setError("Wybierz głos, zanim dodasz tekst.");
+      setError({
+        text: "Wybierz głos, zanim dodasz tekst.",
+        place: "choose-voice",
+      });
       return;
     }
 
@@ -49,7 +57,7 @@ export default function AddText() {
       setItems((prev) => [...prev, ...newItems]);
 
       setText(""); // Czyści pole tekstowe
-      setError("");
+      setError({ text: "", place: "" }); // Czyści błąd
 
       // Scroll to the last item
       setTimeout(() => {
@@ -59,7 +67,7 @@ export default function AddText() {
         }
       }, 1);
     } else {
-      setError("Wpisz tekst, zanim dodasz.");
+      setError({ text: "Wpisz tekst, zanim dodasz.", place: "textarea" });
     }
   };
 
@@ -75,7 +83,7 @@ export default function AddText() {
       } as ItemProps;
 
       setItems((prev) => [...prev, breakItem]);
-      setError("");
+      setError({ text: "", place: "" });
 
       // Scroll to the last item
       setTimeout(() => {
@@ -85,7 +93,7 @@ export default function AddText() {
         }
       }, 1);
     } else {
-      setError("Ustaw czas trwania przerwy.");
+      setError({ text: "Ustaw czas trwania przerwy.", place: "add-break" });
     }
   };
 
@@ -93,13 +101,18 @@ export default function AddText() {
     <div className="max-w-7xl space-y-4">
       <h2 className="text-lg font-bold">Dodaj do scenariusza:</h2>
       <Textarea
-        placeholder="Wpisz tekst..."
+        placeholder={error.place === "textarea" ? error.text : "Wpisz tekst..."}
         value={text}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={(e) => {
+          setError({ text: "", place: "" });
           handleKeyDown(e, handleAdd);
         }}
-        className="min-h-[300px]"
+        className={clsx(
+          "min-h-[300px]",
+          error.place === "textarea" &&
+            "border-destructive placeholder-destructive"
+        )}
       />
 
       <div className="flex items-center space-x-4">
@@ -107,7 +120,8 @@ export default function AddText() {
           <VoiceSelector
             voice={currentVoiceActor}
             setVoice={setCurrentVoiceActor}
-            clearError={() => setError("")}
+            error={error}
+            clearError={() => setError({ text: "", place: "" })}
           />
 
           <Button onClick={handleAdd} className="w-full">
@@ -118,21 +132,25 @@ export default function AddText() {
         <div className="w-1/2 flex flex-col gap-2">
           <Input
             type="number"
-            placeholder="Czas trwania (sekundy)"
+            placeholder={
+              error.place === "add-break"
+                ? error.text
+                : "Czas trwania (sekundy)"
+            }
             value={breakDuration || ""}
-            onChange={(e) => setBreakDuration(Number(e.target.value))}
-            className="flex-grow"
+            onChange={(e) => {
+              setBreakDuration(Number(e.target.value));
+              setError({ text: "", place: "" });
+            }}
+            className={clsx(
+              "flex-grow",
+              error.place === "add-break" &&
+                "border-destructive placeholder-destructive text-destructive"
+            )}
           />
           <Button onClick={handleAddBreak}>Dodaj przerwę</Button>
         </div>
       </div>
-
-      {error && (
-        <Alert variant="destructive">
-          <AlertTitle>Błąd</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
     </div>
   );
 }

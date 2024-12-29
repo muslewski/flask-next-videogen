@@ -1,3 +1,5 @@
+"use client";
+
 import { useStoredValueContext } from "@/components/stored-value-context";
 import { Button } from "@/components/ui/button";
 import { AudioLines } from "lucide-react";

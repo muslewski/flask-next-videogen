@@ -32,7 +32,7 @@ export function DeleteDialog({ onDelete }: DeleteDialogProps) {
         <Button
           variant="outline"
           size="icon"
-          className="bg-red-500/20 hover:bg-red-600"
+          className="bg-red-500/20 hover:bg-red-800"
         >
           <Trash2 size={18} />
         </Button>

@@ -97,8 +97,9 @@ export default function TextItem({
         {item.video?.videoFileName && (
           <PreviewVideoButton file={item.video.videoFileName} />
         )}
-        <FindSingleVideoButton item={item} updateVideoData={updateVideoData} />
         {item.audioFileName && <PlayAudioButton file={item.audioFileName} />}
+
+        <FindSingleVideoButton item={item} updateVideoData={updateVideoData} />
 
         <EditDialog
           initialText={item.text}

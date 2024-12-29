@@ -1,4 +1,7 @@
-export const removeFile = async (fileName: string, type: "video" | "audio") => {
+export const removeFile = async (
+  fileName: string,
+  type: "video" | "audio" | "output"
+) => {
   try {
     const response = await fetch(`/api/remove-${type}/${fileName}`, {
       method: "DELETE",
