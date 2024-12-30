@@ -14,12 +14,20 @@ import { v4 as uuidv4 } from "uuid";
 import { Input } from "@/components/ui/input";
 import clsx from "clsx";
 
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ChevronDown, ChevronUp } from "lucide-react";
+
 export interface ErrorObject {
   text: string;
   place: "choose-voice" | "add-break" | "textarea" | "";
 }
 
 export default function AddText() {
+  const [isOpen, setIsOpen] = useState(true);
   const { setItems } = useStoredValueContext();
   const [text, setText] = useState("");
   const [currentVoiceActor, setCurrentVoiceActor] = useState<VoiceActor | null>(
@@ -98,59 +106,77 @@ export default function AddText() {
   };
 
   return (
-    <div className="max-w-7xl space-y-4">
-      <h2 className="text-lg font-bold">Dodaj do scenariusza:</h2>
-      <Textarea
-        placeholder={error.place === "textarea" ? error.text : "Wpisz tekst..."}
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        onKeyDown={(e) => {
-          setError({ text: "", place: "" });
-          handleKeyDown(e, handleAdd);
-        }}
-        className={clsx(
-          "min-h-[300px]",
-          error.place === "textarea" &&
-            "border-destructive placeholder-destructive"
-        )}
-      />
-
-      <div className="flex items-center space-x-4">
-        <div className="w-1/2 flex flex-col gap-2">
-          <VoiceSelector
-            voice={currentVoiceActor}
-            setVoice={setCurrentVoiceActor}
-            error={error}
-            clearError={() => setError({ text: "", place: "" })}
-          />
-
-          <Button onClick={handleAdd} className="w-full">
-            Dodaj tekst
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold">Dodaj do scenariusza:</h2>
+        <CollapsibleTrigger asChild>
+          <Button variant="ghost" size="sm" className="w-9 p-0">
+            {isOpen ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+            <span className="sr-only">Toggle</span>
           </Button>
-        </div>
-
-        <div className="w-1/2 flex flex-col gap-2">
-          <Input
-            type="number"
+        </CollapsibleTrigger>
+      </div>
+      <CollapsibleContent className="mt-4 ">
+        <div className="max-w-7xl space-y-4">
+          <Textarea
             placeholder={
-              error.place === "add-break"
-                ? error.text
-                : "Czas trwania (sekundy)"
+              error.place === "textarea" ? error.text : "Wpisz tekst..."
             }
-            value={breakDuration || ""}
-            onChange={(e) => {
-              setBreakDuration(Number(e.target.value));
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => {
               setError({ text: "", place: "" });
+              handleKeyDown(e, handleAdd);
             }}
             className={clsx(
-              "flex-grow",
-              error.place === "add-break" &&
-                "border-destructive placeholder-destructive text-destructive"
+              "min-h-[300px]",
+              error.place === "textarea" &&
+                "border-destructive placeholder-destructive"
             )}
           />
-          <Button onClick={handleAddBreak}>Dodaj przerwę</Button>
+
+          <div className="flex items-center space-x-4">
+            <div className="w-1/2 flex flex-col gap-2">
+              <VoiceSelector
+                voice={currentVoiceActor}
+                setVoice={setCurrentVoiceActor}
+                error={error}
+                clearError={() => setError({ text: "", place: "" })}
+              />
+
+              <Button onClick={handleAdd} className="w-full">
+                Dodaj tekst
+              </Button>
+            </div>
+
+            <div className="w-1/2 flex flex-col gap-2">
+              <Input
+                type="number"
+                placeholder={
+                  error.place === "add-break"
+                    ? error.text
+                    : "Czas trwania (sekundy)"
+                }
+                value={breakDuration || ""}
+                onChange={(e) => {
+                  setBreakDuration(Number(e.target.value));
+                  setError({ text: "", place: "" });
+                }}
+                className={clsx(
+                  "flex-grow",
+                  error.place === "add-break" &&
+                    "border-destructive placeholder-destructive text-destructive"
+                )}
+              />
+              <Button onClick={handleAddBreak}>Dodaj przerwę</Button>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }

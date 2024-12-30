@@ -2,10 +2,12 @@
 
 import { useStoredValueContext } from "@/components/stored-value-context";
 import { Button } from "@/components/ui/button";
+import clsx from "clsx";
 import { AudioLines } from "lucide-react";
 
 export default function GenerateAudioButton() {
-  const { items, setItems, setIsGeneratingAudio } = useStoredValueContext();
+  const { items, setItems, setIsGeneratingAudio, isGeneratingAudio } =
+    useStoredValueContext();
 
   const handleGenerateAudio = async () => {
     try {
@@ -36,7 +38,10 @@ export default function GenerateAudioButton() {
 
   return (
     <Button onClick={handleGenerateAudio}>
-      <AudioLines size={18} />
+      <AudioLines
+        size={18}
+        className={clsx({ "animate-pulse": isGeneratingAudio })}
+      />
       Generuj dźwięki
     </Button>
   );

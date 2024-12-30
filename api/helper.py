@@ -1,5 +1,5 @@
 import os
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import as_completed
 from moviepy.editor import AudioFileClip, VideoFileClip, concatenate_videoclips
 import uuid
 
@@ -111,7 +111,7 @@ def combine_media_together(items, task_id, tasks, executor, transition_duration=
             combined_media_file_path, 
             codec="h264_nvenc", 
             audio_codec="aac", 
-            preset="slow", 
+            preset="fast", 
             bitrate="4000k", 
             threads=24, 
             ffmpeg_params=["-pix_fmt", "yuv420p"]
@@ -124,8 +124,3 @@ def combine_media_together(items, task_id, tasks, executor, transition_duration=
     except Exception as e:
         tasks[task_id] = {"status": "error", "message": str(e)}
         print(f"Error: {str(e)}")
-        
-    finally:
-        # Shutdown the executor
-        executor.shutdown(wait=True)
-        print("Executor shut down successfully")

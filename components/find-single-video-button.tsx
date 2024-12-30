@@ -85,8 +85,8 @@ Return only result from:`
         await handleRemovePreviousVideo(initialVideo.videoFileName);
       }
 
-      // Set videoUrl to the second best quality video url
-      const videoUrl = newVideo.videos?.[1].url;
+      // Set videoUrl to the best quality video url
+      const videoUrl = newVideo.videos?.[0].url;
 
       setIsSavingVideo(true);
 

@@ -42,7 +42,7 @@ export default function ElevenLabsCredits() {
     <div className="w-full max-w-md self-end">
       <div className="mb-2 flex justify-between items-center">
         <span className="text-sm font-medium text-gray-700 dark:text-gray-200 flex gap-2">
-          Wykorzystane kredyty
+          Kredyty ElevenLabs
         </span>
         <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
           {usedCredits} / {totalCredits}

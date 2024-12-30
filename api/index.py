@@ -1,10 +1,11 @@
+from calendar import c
 from concurrent.futures import ThreadPoolExecutor
 import os
 from flask import Flask,request, jsonify, send_file
 from flask_cors import CORS
 
 from api.chat_gpt import summarize_to_one_word
-from api.constants import AUDIO_DIR, OUTPUT_DIR, VIDEO_DIR
+from api.constants import AUDIO_DIR, CHATGPT_POTENTIAL_INSTRUCTION, OUTPUT_DIR, VIDEO_DIR
 from api.eleven_labs import check_client_limit, generate_blank_audio, generate_eleven_labs_audio
 import uuid
 
@@ -165,6 +166,113 @@ def find_video_pixabay_route():
         })
     
 
+@app.route("/api/auto-find-videos", methods=["POST"])
+def auto_find_videos():
+    data = request.json
+    items = data.get("items")
+    
+    used_video_ids = set()
+    for item in items:
+         # Check if 'video' key exists in the item
+        if "video" in item:
+            video = item["video"]
+            # Check if the 'video' value is not None and contains the 'id' key
+            if video is not None and "id" in video:
+                # Add the video ID to the set of used video IDs
+                used_video_ids.add(video["id"])
+    
+    if not items:
+        return jsonify({"status": "error", "message": "No items provided"}), 400
+    
+    updated_items = items.copy()
+    for item in updated_items:
+        # skip if video already exists
+        if item.get("video"):
+            continue
+        
+        #Extract item values
+        item_text = item.get("text")
+        item_id = item.get("id")
+        audio_duration = item.get("audioDuration")
+        
+        # Check if audio duration is provided
+        if not audio_duration:
+            print(f"No audio duration found for item {item_id}")
+            # Skip to the next item
+            continue
+        
+        # define empty Choosen Video object
+        choosen_video = None
+        
+        # Check if query tags are found
+        for _ in range(5):
+            tags = summarize_to_one_word(CHATGPT_POTENTIAL_INSTRUCTION + " " + item_text + " ")
+            # Ensure query tags are not longer than 16 characters
+            query_tags = [tag for tag in tags if len(tag) <= 16]
+            if query_tags:
+                break
+        
+        if not query_tags:
+            print(f"No query tags found for item {item_id}")
+            # Skip to the next item
+            continue 
+        
+        print("Query tags:", query_tags)
+        
+        # Loop through query tags to find video
+        for query_tag in query_tags:
+            page = 1
+            video_objects, total_results = find_pixabay_video(query_tag, max_results=4, page=page)
+            total_pages = (total_results + 3) // 4 # Calculate total number of pages
+            
+            while page <= total_pages:
+                if total_results == 0:
+                    break
+                
+                # Check if any video found and not already used
+                for video_object in video_objects:
+                    video_id = video_object["id"]
+                    video_duration = video_object["videoDuration"]
+                    if video_id not in used_video_ids and video_duration > audio_duration:
+                        choosen_video = video_object
+                        used_video_ids.add(video_id)
+                        break
+                    
+                # If video is found, break out of the loop of pages
+                if choosen_video:
+                    break
+                
+                # Try the next page
+                page += 1
+                video_objects, total_results = find_pixabay_video(query_tag, max_results=4, page=page)
+            
+            # If a video is found, break out of the loop of query tags
+            if choosen_video:
+                break
+            
+        # If no video is found, skip to the next item
+        if not choosen_video:
+            print(f"No suitable video found for item {item_id}")
+            # Skip to the next item
+            continue
+            
+        # Get choosen video url
+        choosen_video_url = choosen_video["videos"][0]["url"] # Get best quality video
+        # Generate filename id
+        filename_id = uuid.uuid4()
+        
+        # Save video
+        video_file_name = save_video(filename_id, choosen_video_url)
+        
+        # Update choosen video object with video file name and duration
+        choosen_video["videoFileName"] = video_file_name
+       
+        # Update item with choosen video
+        item["video"] = choosen_video
+        
+    return jsonify({"status": "success", "message": "Videos found", "updatedItems": updated_items})
+    
+
 @app.route("/api/save-video", methods=["POST"])
 def save_video_route():
     data = request.json
@@ -180,3 +288,4 @@ def save_video_route():
         return jsonify({"status": "success", "message": "Video saved successfully", "videoFileName": video_file_name})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+

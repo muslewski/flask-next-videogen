@@ -1,4 +1,7 @@
-import { useStoredValueContext } from "@/components/stored-value-context";
+import {
+  useStoredValueContext,
+  VideoObject,
+} from "@/components/stored-value-context";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,7 +15,15 @@ import {
 } from "@/components/ui/dialog";
 import { FileVideo } from "lucide-react";
 
-export default function PreviewVideoButton({ file }: { file: string }) {
+interface PreviewVideoButtonProps {
+  file: string;
+  onDelete: () => void;
+}
+
+export default function PreviewVideoButton({
+  file,
+  onDelete,
+}: PreviewVideoButtonProps) {
   const { isSavingVideo } = useStoredValueContext();
 
   return (
@@ -42,6 +53,14 @@ export default function PreviewVideoButton({ file }: { file: string }) {
         </video>
 
         <DialogFooter>
+          <Button
+            onClick={onDelete}
+            variant="destructive"
+            disabled={isSavingVideo}
+          >
+            Usuń Video
+          </Button>
+
           <DialogClose asChild>
             <Button type="button" variant="secondary">
               Zamknij Podgląd

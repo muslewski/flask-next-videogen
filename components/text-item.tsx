@@ -19,7 +19,7 @@ interface TextItemComponentProps {
     newVoiceActor: VoiceActor | null
   ) => void;
   onDelete: (id: string) => void;
-  updateVideoData: (id: string, newVideo: VideoObject) => void;
+  updateVideoData: (id: string, newVideo: VideoObject | null) => void;
 }
 
 function detectNumbers(text: string): boolean {
@@ -48,6 +48,14 @@ export default function TextItem({
       removeFile(item.video.videoFileName, "video");
 
     onDelete(item.id);
+  };
+
+  const handleDeleteVideo = async () => {
+    // Remove video file
+    if (item.video?.videoFileName)
+      removeFile(item.video.videoFileName, "video");
+
+    updateVideoData(item.id, null);
   };
 
   return (
@@ -95,7 +103,10 @@ export default function TextItem({
       </div>
       <div className="space-x-2 flex-shrink-0">
         {item.video?.videoFileName && (
-          <PreviewVideoButton file={item.video.videoFileName} />
+          <PreviewVideoButton
+            file={item.video.videoFileName}
+            onDelete={handleDeleteVideo}
+          />
         )}
         {item.audioFileName && <PlayAudioButton file={item.audioFileName} />}
 

@@ -3,6 +3,7 @@
 import { useStoredValueContext } from "@/components/stored-value-context";
 import { Button } from "@/components/ui/button";
 import { removeFile } from "@/helper/remove-file";
+import clsx from "clsx";
 import { Blend } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -93,7 +94,7 @@ export default function CombineButton() {
         });
         setIsCombiningProject(false);
       } else {
-        setTimeout(() => pollTaskStatus(taskId), 1000); // Poll every 1s
+        setTimeout(() => pollTaskStatus(taskId), 2000); // Poll every 2s
       }
     } catch (error) {
       toast("Błąd!", {
@@ -109,7 +110,10 @@ export default function CombineButton() {
       disabled={isCombiningProject}
       className="flex items-center"
     >
-      <Blend size={18} />
+      <Blend
+        size={18}
+        className={clsx({ "animate-spin": isCombiningProject })}
+      />
       <span className="ml-2 w-28 text-center">
         {isCombiningProject ? "Łączenie" : "Połącz wszystko"}
       </span>

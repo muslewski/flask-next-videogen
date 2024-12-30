@@ -46,6 +46,8 @@ interface StoredValueContextProps {
   setCombinedFileName: React.Dispatch<React.SetStateAction<string | null>>;
   isSavingVideo: boolean;
   setIsSavingVideo: React.Dispatch<React.SetStateAction<boolean>>;
+  isSearchingForVideos: boolean;
+  setIsSearchingForVideos: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const StoredValueContext = createContext<StoredValueContextProps | undefined>(
@@ -77,6 +79,12 @@ export const StoredValueProvider = ({ children }: { children: ReactNode }) => {
    * Boolean that indicates if we are saving video in Pixabay, Pexels, etc.
    */
   const [isSavingVideo, setIsSavingVideo] = useState<boolean>(false);
+
+  /**
+   * Boolean that indicates if we are searching for videos
+   */
+  const [isSearchingForVideos, setIsSearchingForVideos] =
+    useState<boolean>(false);
 
   // Load items from localStorage on component mount
   useEffect(() => {
@@ -121,6 +129,8 @@ export const StoredValueProvider = ({ children }: { children: ReactNode }) => {
         setCombinedFileName,
         isSavingVideo,
         setIsSavingVideo,
+        isSearchingForVideos,
+        setIsSearchingForVideos,
       }}
     >
       {children}

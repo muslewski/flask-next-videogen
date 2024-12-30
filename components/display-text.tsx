@@ -42,7 +42,7 @@ export default function DisplayText() {
     setItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
-  const updateVideoData = (id: string, newVideo: VideoObject) => {
+  const updateVideoData = (id: string, newVideo: VideoObject | null) => {
     setItems((prevItems) =>
       prevItems.map((item) =>
         item.id === id ? { ...item, video: newVideo } : item

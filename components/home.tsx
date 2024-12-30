@@ -6,8 +6,7 @@ import DisplayText from "@/components/display-text";
 import ElevenLabsCredits from "@/components/eleven-labs-credits";
 import GenerateAudioButton from "@/components/generate-audio-button";
 import GenerateScenarioButton from "@/components/generate-scenario-button";
-import GenerateVideoButton from "@/components/generate-video-button";
-import { useStoredValueContext } from "@/components/stored-value-context";
+import AutoFindVideosButton from "@/components/auto-find-videos-button";
 
 export default function Home() {
   return (
@@ -17,18 +16,19 @@ export default function Home() {
         <AddText />
 
         <div className="flex flex-col gap-12">
-          <CombineDisplay />
-
           <div className="flex flex-wrap items-center gap-6 self-end bg-gradient-to-br from-gray-600/5 rounded-xl px-4 py-3">
             <GenerateScenarioButton />
             <GenerateAudioButton />
-            <GenerateVideoButton />
+            <AutoFindVideosButton />
             <CombineButton />
 
             <DeleteAll />
           </div>
           <ElevenLabsCredits />
         </div>
+
+        {/* Absolute bottom right */}
+        <CombineDisplay />
       </div>
 
       {/* Right Side */}
