@@ -49,7 +49,7 @@ export default function AutoFindVideosButton() {
         });
         setIsSearchingForVideos(false);
       } else {
-        setTimeout(() => pollTaskStatus(taskId), 2000); // Poll every 2s
+        setTimeout(() => pollTaskStatus(taskId), 5000); // Poll every 5s
       }
     } catch (error) {
       toast("Błąd!", {
