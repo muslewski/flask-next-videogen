@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ItemProps,
   useStoredValueContext,
   VideoObject,
 } from "@/components/stored-value-context";
@@ -50,6 +51,12 @@ export default function DisplayText() {
     );
   };
 
+  const updateItem = (id: string, newItem: ItemProps) => {
+    setItems((prevItems) =>
+      prevItems.map((item) => (item.id === id ? newItem : item))
+    );
+  };
+
   return (
     <div className="space-y-2">
       <h2 className="text-lg font-bold">Scenariusz:</h2>
@@ -69,6 +76,7 @@ export default function DisplayText() {
             onEdit={handleEdit}
             onDelete={handleDelete}
             updateVideoData={updateVideoData}
+            updateItem={updateItem}
           />
         ))}
       </Reorder.Group>

@@ -24,14 +24,37 @@ export default function AutoFindVideosButton() {
       const data = await response.json();
 
       if (data.status === "success") {
-        const { updatedItems } = data;
-        setItems(updatedItems);
-        toast("Filmy zostały automatycznie znalezione");
+        pollTaskStatus(data.taskId);
       }
     } catch (error) {
       console.error(error);
       toast("Wystąpił błąd podczas wyszukiwania filmów");
-    } finally {
+    }
+  };
+
+  const pollTaskStatus = async (taskId: string) => {
+    try {
+      const response = await fetch(`/api/task-status/${taskId}`);
+      const data = await response.json();
+
+      if (data.status === "completed") {
+        setItems(data.updatedItems);
+        toast("Sukces!", {
+          description: "Wyszukiwanie filmów zakończone.",
+        });
+        setIsSearchingForVideos(false);
+      } else if (data.status === "error") {
+        toast("Błąd!", {
+          description: data.message,
+        });
+        setIsSearchingForVideos(false);
+      } else {
+        setTimeout(() => pollTaskStatus(taskId), 2000); // Poll every 2s
+      }
+    } catch (error) {
+      toast("Błąd!", {
+        description: "Wystąpił błąd podczas sprawdzania statusu zadania.",
+      });
       setIsSearchingForVideos(false);
     }
   };

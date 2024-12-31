@@ -82,8 +82,8 @@ https://github.com/elevenlabs/elevenlabs-python
 
 ## TODO:
 
-- [ ] Set duration of video item when finding new video
-
+- [ ] Change videoObject to array of videoObjects and limit the videoDuration to maximum of 10s / allow for chosing many videos
+- [x] Set duration of video item when finding new video
 - [x] Add Different Voices Actor
 - [ ] Add Draggable width in Home between two main divs.
 - [ ] Add Settings

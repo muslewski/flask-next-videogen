@@ -4,7 +4,7 @@ import CombineDisplay from "@/components/combine-display";
 import DeleteAll from "@/components/delete-all";
 import DisplayText from "@/components/display-text";
 import ElevenLabsCredits from "@/components/eleven-labs-credits";
-import GenerateAudioButton from "@/components/generate-audio-button";
+import AutoGenerateAudioButton from "@/components/auto-generate-audio-button";
 import GenerateScenarioButton from "@/components/generate-scenario-button";
 import AutoFindVideosButton from "@/components/auto-find-videos-button";
 
@@ -18,7 +18,7 @@ export default function Home() {
         <div className="flex flex-col gap-12">
           <div className="flex flex-wrap items-center gap-6 self-end bg-gradient-to-br from-gray-600/5 rounded-xl px-4 py-3">
             <GenerateScenarioButton />
-            <GenerateAudioButton />
+            <AutoGenerateAudioButton />
             <AutoFindVideosButton />
             <CombineButton />
 
